@@ -3,7 +3,7 @@ SecureCart – Flask Web Application with CI/CD and Security Testing.
 This project is a secure, full-stack, containerised Flask-based e-commerce web application developed as part of my Cyber Context of Software Engineering module coursework. It integrates secure coding practices, automated testing, and CI/CD deployment pipelines, allowing security practices to be incorporated during development rather than after, thereby classifying the project as DevSecOps.
 
 ---
-The web application is a simple e-commerce website that features both a back-end and a front-end, along with a connected SQL database.
+The web application is a simple e-commerce website and is created using both a back-end and a front-end, along with a connected SQL database.
 The website has been developed using HTML for templates, JavaScript for interactive components, CSS for styling and Python for the back-end.
 The website allows users to sign up or log in, manages inventory correctly and has incorporated role-based access controls to ensure only the admin can access the admin dashboard.
 The website uses sessions and enforces a strong password policy.
