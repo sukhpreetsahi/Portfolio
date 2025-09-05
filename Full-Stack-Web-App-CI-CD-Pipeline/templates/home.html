@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block body %}
+<script>
+function addToCart(productId) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // ADDED FOR CSRF
+    fetch('/add_to_cart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-Token': csrfToken, // ADDED FOR CSRF
+        },
+        body: JSON.stringify({
+            product_id: productId,
+        }),
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => {
+                window.location.reload(); 
+                throw new Error(`Error: ${data.message}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            updateCartCount();
+            window.location.reload();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+</script>
+
+    <main role="main">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          <div>
+              {% for category, message in messages %}
+                  <div class="alert alert-{{ category }} mt-4">
+                      {{ message }}
+                  </div>
+              {% endfor %}
+          </div>
+      {% endif %}
+      {% endwith %}
+      <section class="jumbotron text-center">
+        <div class="container">
+          <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor" class="bi bi-cart" viewBox="0 0 18 18">
+            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"></path>
+            <path d="M9.5 6.5a1.5 1.5 0 0 1-1 1.415l.385 1.99a.5.5 0 0 1-.491.595h-.788a.5.5 0 0 1-.49-.595l.384-1.99a1.5 1.5 0 1 1 2-1.415"></path>
+          </svg>
+          <h1 class="jumbotron-heading">SecureCart Products</h1>
+          <p class="lead text-muted">Bringing security to your cart whilst you shop stress free!</p>
+        </div>
+      </section>
+      <div class="container">
+        {% for i in range(0, products|length, 3) %}
+        <div class="row mb-4">
+          {% for product in products[i:i+3] %}
+          <div class="col-sm-4">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{ product.productname }}</h5>
+                  <p class="card-text">{{ product.description }}</p>
+                  <p class="card-text"><strong>Price:</strong> £{{ product.price}}</p>
+                  <p class="card-text text-muted"><strong>Stock:</strong> {{ product.stock}}</p>
+                  <div class="d-flex">
+                    <button type="button" class="btn btn-success btn-work ml-auto" style="width: 10rem" onclick="addToCart('{{product.id}}')">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cart mr-auto" viewBox="0 0 16 16">
+                      <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"></path>
+                      </svg>
+                       Add to Cart
+                    </button>
+                  </div>
+                </div>
+              </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+    </main>
+{% endblock %}
