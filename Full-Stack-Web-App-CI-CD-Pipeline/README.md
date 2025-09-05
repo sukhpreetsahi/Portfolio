@@ -24,7 +24,7 @@ The following are needed to test the CI/CD Pipeline and the web application.
 
 ---
 The Docker image is built and pushed by GitHub Actions. You can run it locally using the following steps.
-Before these steps, the GitHub workflow should have been successfully completed and should have a green tick.
+Before these steps, the GitHub workflow should have been completed and should have a green tick.
 
 1. Pull the Docker image:\
   docker pull sukhpreetsahi5/securecart-app:latest
