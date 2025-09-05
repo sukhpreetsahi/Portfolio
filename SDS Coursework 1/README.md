@@ -37,6 +37,8 @@ The project follows a modular approach, dividing the functionality into differen
 The code ensures role based access to pages. Only doctors can access doctor dashboards, only admins can access admin dashboard etc.
 Private attributes are used to ensure other classes can't directly access and manipulate sensitive data.
 
-## Demonstration Video:
+## Demonstration Video
 Link: https://youtu.be/Hl0qjwkZOtU
 
+## Application Screenshot
+<img width="1073" height="812" alt="image" src="https://github.com/user-attachments/assets/6fb2a1b9-0e65-46b1-b996-8c232bc277cc" />
