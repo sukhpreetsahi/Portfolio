@@ -32,6 +32,11 @@ The project follows a modular approach, dividing the functionality into differen
     users.py: Defines user classes (Admin, Doctor, Patient).
     main.py: The main entry point of the system.
 
+## Security Practices Incorporated
+
+The code ensures role based access to pages. Only doctors can access doctor dashboards, only admins can access admin dashboard etc.
+Private attributes are used to ensure other classes can't directly access and manipulate sensitive data.
+
 ## Demonstration Video:
 Link: https://youtu.be/Hl0qjwkZOtU
 
