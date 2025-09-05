@@ -36,7 +36,7 @@ A full-stack demo E-commerce web application with:
 
 ### 🔹 [Secure CLI Investment Management System](./)
 
-### 🔹 [GUI Healthcare Centre Management System](./SDS 1)
+### 🔹 [GUI Medical Centre Management System](./)
 
 ---
 
