@@ -1,4 +1,4 @@
-SecureCart – Flask Web Application with CI/CD and Security Testing.
+## SecureCart – Flask Web Application with CI/CD and Security Testing.
 
 This project is a secure, full-stack, containerised Flask-based e-commerce web application developed as part of my Cyber Context of Software Engineering module coursework. It integrates secure coding practices, automated testing, and CI/CD deployment pipelines, allowing security practices to be incorporated during development rather than after, thereby classifying the project as DevSecOps.
 
@@ -42,3 +42,7 @@ Before these steps, the GitHub workflow should have been completed and should ha
 
 Note:
 This is a sample testing scenario, hence the secret key is provided here. The secret key would be kept hidden otherwise.
+
+## Website Screenshot
+
+<img width="1913" height="949" alt="image" src="https://github.com/user-attachments/assets/d6da70e2-2e87-4d86-9c4f-0ac9444d67ff" />
