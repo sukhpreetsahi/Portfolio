@@ -34,7 +34,7 @@ jobs:
       run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
     - name: Snyk Open Source Scan SCA
-      run: snyk test --file=requirements.txt --package-manager=pip
+      run: snyk test --file=Full-Stack-Web-App-CI-CD-Pipeline/requirements.txt --package-manager=pip
 
     - name: Snyk Code Scan SAST
       run: snyk code test
