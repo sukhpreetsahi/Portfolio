@@ -1,20 +1,22 @@
-## MyFinanceInc Secure Investment Management System
-In this project, a secure investment system has been created, whilst keeping the security of data as a top priority.
-The system is a client-server system and clients contact the server for details, changes, investments and communications.
+## MyFinanceInc Secure Investment Management System: 
+
+In this project, a secure investment system has been created, whilst keeping the security of data as a top priority.  
+
+The system is a client-server system and clients contact the server for details, changes, investments and communications.  
 
 The design of the MyFinance Inc. cryptosystem is derived from fundamental security requirements specified in the brief and from essential security principles from legislation and international standards such as UK GDPR, ISO 27001 and NIST. The key objectives of the program are to ensure the confidentiality, integrity, and authenticity of sensitive data.
----
+  
 ## DEPENDENCIES REQUIRED:
 - python3
 - bcrypt
 - pycryptodomex
 - maskpass
 - python-dotenv
+
 These can be installed with the command:
 "pip install bcrypt pycryptodome maskpass python-dotenv"
 
---
-FILES:                Explanation:
+## FILES:
 - application.py:     This is the main program that runs the CLI
 - key_generator.py:   This file generates the symmetric key to encrypt the CSV file holding client data.
 - secrets.env: 	      This file contains the symmetric key to encrypt the CSV file and the SMTP server username and password.
@@ -37,7 +39,7 @@ and encrypted yet.)
 To ensure random real-life email addresses aren't sent OTPs, when registering an account, enter emails from a temporary email generator such as temp-mail.org.
 For testing purposes, a temporary SMTP server has been created to send OTPs to the emails entered. This can be changed to a real SMTP server in the secrets.env file.
 
---
+---
 The following functions can be tested as they are fully functional in the application.py file:
 
 Homescreen function:
@@ -46,10 +48,11 @@ Homescreen function:
 
 Dashboard function:
 - View/Edit Own Details
-- View Communications
+- View Communications  
 
 The other functions aren't functional but are available for future development.
---
+
+---
 ## Security Practices Incorporated
 - Role-based access control.
 - Multi-factor authentication (Password + OTP).
@@ -62,5 +65,6 @@ The other functions aren't functional but are available for future development.
 
 ## System Screenshots
 <img width="664" height="223" alt="image" src="https://github.com/user-attachments/assets/abedb3fd-8c8a-45c7-928f-fa778ddc9a1c" />
-<img width="445" height="411" alt="image" src="https://github.com/user-attachments/assets/82293c24-d3e0-4971-baa1-c3dedd94f563" />
+<img width="445" height="411" alt="image" src="https://github.com/user-attachments/assets/82293c24-d3e0-4971-baa1-c3dedd94f563" />  
+
 <img width="490" height="435" alt="image" src="https://github.com/user-attachments/assets/8abc182c-8705-4475-a678-edbd6c0405af" />
