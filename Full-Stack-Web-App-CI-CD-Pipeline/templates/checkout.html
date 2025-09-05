@@ -1,0 +1,384 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Checkout</h2>
+    <form action="/process_checkout" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"> <!-- CSRF token added -->
+        <!-- Order Summary -->
+        <div class="jumbotroncheckout mt-2" style="margin: 10px; border-radius: 25px;">
+        <div class="section-spacing mt-2" style="margin: 10px 10px">
+            <h4 class="mb-3">Order Summary</h4>
+            <ul class="list-group mb-3">
+                {% for item in cart.get_items() %}
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>{{ item.product_name}} &nbsp;&nbsp;&nbsp;&nbsp;</span><span class="text-muted mr-auto">   x {{ item.quantity }}</span>
+                    <strong>£{{ item.subtotal}}</strong>
+                </li>
+                {% endfor %}
+                <li class="list-group-item d-flex ml-auto">
+                    <span style="font-weight: bold;">Total(GBP) &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <strong>£{{ cart.get_total() }}</strong>
+                </li>
+            </ul>
+        </div>
+        </div>
+        <!-- Shipping Address -->
+        <div class="section-spacing">
+            <h4 class="mb-3">Shipping Address</h4>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="shippingFName">First Name</label>
+                    <input type="text" class="form-control" name="shippingFName" id="shippingFName" placeholder="First Name" required>
+                    <div class="invalid-feedback"></div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="shippingLName">Last Name</label>
+                    <input type="text" class="form-control" name="shippingLName" id="shippingLName" placeholder="Last Name" required>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="shippingAddress">Address</label>
+                <input type="text" class="form-control" name="shippingAddress" id="shippingAddress" placeholder="123 High Street" required>
+                <div class="invalid-feedback"></div>
+            </div>
+            <div class="form-group">
+                <label for="shippingAddress2">Address 2 <span class="text-muted">(Optional)</span></label>
+                <input type="text" class="form-control" name="shippingAddress2" id="shippingAddress2" placeholder="Flat, Building, or Suite">
+                <div class="invalid-feedback"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="shippingCity">Town/City</label>
+                    <input type="text" class="form-control" name="shippingCity" id="shippingCity" placeholder="e.g., London" required>
+                    <div class="invalid-feedback"></div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="shippingPostcode">Postcode</label>
+                    <input type="text" class="form-control" name="shippingPostcode" id="shippingPostcode" placeholder="e.g., SW1A 1AA" required>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+        </div>
+        <!-- Billing Address -->
+        <div class="section-spacing">
+            <h4 class="mb-3">Billing Address</h4>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="firstName">First Name</label>
+                    <input type="text" class="form-control" name="firstName" id="firstName" placeholder="First Name" required>
+                    <div class="invalid-feedback"></div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" class="form-control" name="lastName" id="lastName" placeholder="Last Name" required>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" name="email" id="email" placeholder="you@example.com" required>
+                <div class="invalid-feedback"></div>
+            </div>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" class="form-control" name="address" id="address" placeholder="123 High Street" required>
+                <div class="invalid-feedback"></div>
+            </div>
+            <div class="form-group">
+                <label for="address2">Address 2 <span class="text-muted">(Optional)</span></label>
+                <input type="text" class="form-control" name="address2" id="address2" placeholder="Flat, Building, or Suite">
+                <div class="invalid-feedback"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="city">Town/City</label>
+                    <input type="text" class="form-control" name="city" id="city" placeholder="e.g., London" required>
+                    <div class="invalid-feedback"></div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="postcode">Postcode</label>
+                    <input type="text" class="form-control" name="postcode" id="postcode" placeholder="e.g., SW1A 1AA" required>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+        </div>
+        <!-- Payment Details -->
+        <div class="section-spacing">
+            <h4 class="mb-3">Payment Details</h4>
+            <div class="form-group">
+                <label for="cardName">Name on Card</label>
+                <input type="text" class="form-control" name="cardName" id="cardName" placeholder="Name on card" required>
+                <small class="text-muted">Full name as displayed on card</small>
+                <div class="invalid-feedback"></div>
+            </div>
+            <div class="form-group">
+                <label for="cardNumber">Card Number</label>
+                <input type="text" class="form-control" name="cardNumber" id="cardNumber" placeholder="1111-2222-3333-4444" required>
+                <div class="invalid-feedback"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="expiration">Expiration</label>
+                    <input type="text" class="form-control" name="expiration" id="expiration" placeholder="MM/YY" required>
+                    <div class="invalid-feedback"></div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="cvv">CVV</label>
+                    <input type="text" class="form-control" name="cvv" id="cvv" placeholder="123/1234" required>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+        </div>
+        <div class="section ml-auto">
+            <h4 class="mb-3">Total: &nbsp;&nbsp;&nbsp;&nbsp; £{{ cart.get_total() }}</h4>
+        </div>        
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Place Order</button>
+    </form>
+</div>
+
+<script>
+    // Event listeners for validation
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form');
+    
+        // Input field selectors
+        const fields = {
+            shippingFName: document.getElementById('shippingFName'),
+            shippingLName: document.getElementById('shippingLName'),
+            shippingAddress: document.getElementById('shippingAddress'),
+            shippingAddress2: document.getElementById('shippingAddress2'),
+            shippingPostcode: document.getElementById('shippingPostcode'),
+            shippingCity: document.getElementById('shippingCity'),
+            fName: document.getElementById('firstName'),
+            lName: document.getElementById('lastName'),
+            email: document.getElementById('email'),
+            address: document.getElementById('address'),
+            address2: document.getElementById('address2'),
+            city: document.getElementById('city'),
+            postcode: document.getElementById('postcode'),
+            cardName: document.getElementById('cardName'),
+            cardNumber: document.getElementById('cardNumber'),
+            expiry: document.getElementById('expiration'),
+            cvv: document.getElementById('cvv'),
+        };
+    
+        // Validation rules
+        const nameRegex = /^[a-zA-Z]+$/; // Only letters
+        const postcodeRegex = /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/i // UK postcode format
+        const textRegex = /^[a-zA-Z\s]+$/; // Letters and spaces only
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const addressRegex = /^[A-Za-z0-9\s,'-]{1,100}$/;
+        const address2Regex = /^$|^[A-Za-z0-9\s,'-]{1,100}$/
+        const cardNoRegex =  /^\d{16}$/
+        const cardExpiryRegex = /^(0[1-9]|1[0-2])\/\d{2}$/
+        const cvvRegex = /^\d{3,4}$/
+    
+        function validateField(field, regex, errorMessage) {
+            const value = field.value.trim();
+            if (!regex.test(value)) {
+                field.classList.add('is-invalid');
+                field.nextElementSibling.textContent = errorMessage;
+                console.log("Hello" + errorMessage + "!");
+                return false;
+            }   
+            
+            else {
+                field.classList.remove('is-invalid');
+                field.nextElementSibling.textContent = '';
+                console.log("Hi" + errorMessage + "!");
+                return true;
+            }
+        }
+
+        function validateCardExpiry(expiryDateField) {
+            const value = expiryDateField.value.trim();
+            if (!cardExpiryRegex.test(value)) {
+                expiryDateField.classList.add('is-invalid');
+                expiryDateField.nextElementSibling.textContent = 'Invalid expiry date format. Use MM/YY.';
+                console.log("Bye !");
+                return false;
+            }
+
+            // Parse the month and year
+            const [month, year] = value.split('/').map(Number); // Split and convert to numbers
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear() % 100; // Get last two digits of current year
+            const currentMonth = currentDate.getMonth() + 1; // Months are zero-based
+
+            // Check if the date is expired
+            if (year < currentYear || (year === currentYear && month < currentMonth)) {
+                expiryDateField.classList.add('is-invalid');
+                expiryDateField.nextElementSibling.textContent = 'This card has expired.';
+                return false;
+            }
+
+            // Valid expiry date
+            expiryDateField.classList.remove('is-invalid');
+            expiryDateField.nextElementSibling.textContent = '';
+            return true;
+        }
+
+        // Add real-time validation for name fields
+        const names = [fields.shippingFName, fields.shippingLName, fields.fName, fields.lName];
+        const address = [fields.shippingAddress,  fields.address];
+        const address2 = [fields.shippingAddress2, fields.address2];
+        const full_names = [fields.shippingCity, fields.city, fields.cardName];
+        const postcodes = [fields.shippingPostcode, fields.postcode];
+
+        for (const field of names) {
+            field.addEventListener('blur', function () {
+                validateField(
+                    field,
+                    nameRegex,
+                    'Must contain only letters and no spaces.'
+                );
+            });
+        }
+
+        for (const field of address) {
+            field.addEventListener('blur', function () {
+                validateField(
+                    field,
+                    addressRegex,
+                    'Provide a valid address line.'
+                );
+            });
+        }
+
+        for (const field of address2) {
+            field.addEventListener('blur', function () {
+                validateField(
+                    field,
+                    address2Regex,
+                    'Provide a valid address line.'
+                );
+            });
+        }
+
+        for (const field of full_names) {
+            field.addEventListener('blur', function () {
+                validateField(
+                    field,
+                    textRegex,
+                    'Letters and spaces only.'
+                );
+            });
+        }
+    
+        for (const field of postcodes) {
+            field.addEventListener('blur', function () {
+                validateField(
+                    field,
+                    postcodeRegex,
+                    'Please provide a valid UK postcode (e.g., SW1A 1AA).'
+                );
+            });
+        }
+    
+        fields.email.addEventListener('blur', function () {
+            validateField(
+                fields.email,
+                emailRegex,
+                'Please provide a valid email.'
+            );
+        });
+    
+        fields.cardNumber.addEventListener('blur', function () {
+            validateField(
+                fields.cardNumber,
+                cardNoRegex,
+                'Please provide a 16 digit card number.'
+            );
+        });
+
+        fields.expiry.addEventListener('blur', function () {
+            validateCardExpiry(
+                fields.expiry,
+            );
+        });
+
+        fields.cvv.addEventListener('blur', function () {
+            validateField(
+                fields.cvv,
+                cvvRegex,
+                'Please provide a valid 3 or 4 digit cvv.'
+            );
+        });
+
+        // Form submission validation
+        form.addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent form submission
+    
+            let isValid = true;
+
+            for (const field of names) {
+                isValid &= validateField(
+                    field,
+                    nameRegex,
+                    'Must contain only letters and no spaces.'
+                );
+            };
+            
+            for (const field of address) {
+                isValid &= validateField(
+                    field,
+                    addressRegex,
+                    'Provide a valid address line.'
+                );
+            };
+
+            for (const field of address2) {
+                isValid &= validateField(
+                    field,
+                    address2Regex,
+                    'Provide a valid address line.'
+                );
+            };
+            
+            for (const field of full_names) {
+                isValid &= validateField(
+                    field,
+                    textRegex,
+                    'Letters and spaces only.'
+                );
+                };
+    
+            for (const field of postcodes) {
+                isValid &= validateField(
+                    field,
+                    postcodeRegex,
+                    'Please provide a valid UK postcode (e.g., SW1A 1AA).'
+                );
+                };
+        
+            isValid &= validateField(
+                fields.email,
+                emailRegex,
+                'Please provide a valid email.'
+                );
+        
+            isValid &= validateField(
+                fields.cardNumber,
+                cardNoRegex,
+                'Please provide a 16 digit card number.'
+                );
+
+            isValid &= validateCardExpiry(
+                fields.expiry,
+                );
+
+            isValid &= validateField(
+                fields.cvv,
+                cvvRegex,
+                'Please provide a valid 3 or 4 digit cvv.'
+                );
+    
+            if (isValid) {
+                alert('Form submitted successfully!');
+                form.submit(); // Submit the form
+            }
+        });
+    });
+</script>
+{% endblock %}
