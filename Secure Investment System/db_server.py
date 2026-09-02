@@ -11,8 +11,7 @@ import threading
 from dotenv import load_dotenv
 import base64
 
-
-load_dotenv(dotenv_path='secrets.env')
+load_dotenv()
 _loaded_aes_key = None
 
 SMTP_SERVER = 'smtp.mailersend.net'
@@ -20,12 +19,17 @@ SMTP_PORT = 587
 SENDER_EMAIL = os.environ.get('SMTP_USER')
 SENDER_PASSWORD = os.environ.get('SMTP_PASS')
 
+# For local development, generate a self-signed certificate and private key.
+# Private key material is intentionally excluded from version control.
+TLS_CERT_FILE = os.environ.get('TLS_CERT_FILE', 'db_server_cert.crt')
+TLS_KEY_FILE = os.environ.get('TLS_KEY_FILE', 'db_server_key.key')
+
 def load_aes_key():
     global _loaded_aes_key
     if _loaded_aes_key is None:
         key_b64 = os.environ.get('AES_KEY_B64')
         if not key_b64:
-            raise ValueError("AES_KEY_B64 not found in environment variables. Ensure secrets.env exists.")
+            raise ValueError("AES_KEY_B64 not found in environment variables. Create a local .env file from .env.example.")
         try:
             _loaded_aes_key = base64.b64decode(key_b64)
             if len(_loaded_aes_key) != 32:
@@ -59,91 +63,56 @@ class Session:
         return self.__communications
 
 def serialise_list(contact_info_list):
-    """
-    Changes the , in the list to | to stop problems occuring when coverting message to csvDict
-    """
     return '|'.join(contact_info_list)
 
 def deserialise_list(contact_info_str):
-    """
-    Changes | back to , to store back as list.
-    """
     return contact_info_str.split('|')
 
 def add_client(client, key=return_key(), filename='clients.csv.enc'):
-    """
-    Adds clients to CSV file or creates new CSV file if doesn't exist
-    """
-    if not os.path.exists(filename):  # If CSV file doesn't exist
+    if not os.path.exists(filename):
         rows = ["username,contact_info,hashed_password"]
-        # 0 is username, 1 is contact info list, 2 is hashed_password
         row = f"{client[0]},{client[1]},{client[2]}"
         rows.append(row)
         csv_data = "\n".join(rows)
-        encrypted_data = encrypt_data(csv_data, key)  # Encrypts csv data
-
-        with open(filename, "wb") as f:  # Stores into CSV file
+        encrypted_data = encrypt_data(csv_data, key)
+        with open(filename, "wb") as f:
             f.write(encrypted_data)
-
-    else:  # If CSV file exists
+    else:
         clients_data = load_clients()
         rows = ["username,contact_info,hashed_password"]
-        # Re-writes all the clients that were already in the file back on.
         for row in clients_data:
-            rows.append(
-                f"{row['username']},{row['contact_info']},{row['hashed_password']}")
-
-        # Appends new client on
-        rows.append(
-            f"{client[0]},{client[1]},{client[2]}")
-
+            rows.append(f"{row['username']},{row['contact_info']},{row['hashed_password']}")
+        rows.append(f"{client[0]},{client[1]},{client[2]}")
         csv_data = "\n".join(rows)
         encrypted_data = encrypt_data(csv_data, key)
-
         with open(filename, "wb") as f:
             f.write(encrypted_data)
 
 def modify_clients(client, key=return_key(), filename='clients.csv.enc'):
-    """
-    When a clients details are modified, the csv file is updated by this function
-    """
-
     clients_data = load_clients()
     modified_rows = ["username,contact_info,hashed_password"]
-
-    for row in clients_data:  # Updating client data row for client modified
+    for row in clients_data:
         if row['username'] == client[0]:
             row['contact_info'] = client[1]
             row['hashed_password'] = client[2]
-
-        modified_rows.append(
-            f"{row['username']},{row['contact_info']}, {row['hashed_password']}")
-
+        modified_rows.append(f"{row['username']},{row['contact_info']}, {row['hashed_password']}")
     modified_csv_data = "\n".join(modified_rows)
     encrypted_data = encrypt_data(modified_csv_data, key)
-
     with open(filename, "wb") as f:
         f.write(encrypted_data)
 
 def load_clients(key=return_key(), filename='clients.csv.enc'):
-    """
-    This function decrypts and loads client data into a readable dictionary format in a list
-    """
     if not os.path.exists(filename):
         return []
-
     with open(filename, "rb") as file:
         encrypted_data = file.read()
-
     decrypted_data = decrypt_data(encrypted_data, key)
     if decrypted_data is None:
         print("Decryption failed. Data may be corrupted or invalid key.")
         return []
-    
     lines = decrypted_data.decode().strip().split("\n")
     reader = csv.DictReader(lines)
     clients = []
-
     for row in reader:
         clients.append({
             'username': row['username'],
@@ -152,9 +121,6 @@ def load_clients(key=return_key(), filename='clients.csv.enc'):
     return clients
 
 def check_client_exists(username):
-    """
-    Checks if username passed through exists in the csv file
-    """
     try:
         for row in load_clients():
             if row["username"] == username:
@@ -163,13 +129,9 @@ def check_client_exists(username):
         return False
 
 def check_login(username, password):
-    """
-    Checks if username and password match in the csv file.
-    """
     try:
         for row in load_clients():
             if row["username"] == username:
-                # bcrypt used to hash entered password for comparison.
                 if bcrypt.checkpw(password.encode(), row["hashed_password"].encode()):
                     return row
                 else:
@@ -179,17 +141,12 @@ def check_login(username, password):
         return False
 
 def otp_sender(client):
-    """
-    Sends an OTP to the email address of client
-    """
     if not SENDER_EMAIL or not SENDER_PASSWORD:
         print("OTP Error: SMTP credentials not configured.")
         return False
-
     otp = ''
     for loop in range(6):
-        otp += str(random.randint(0, 9))  # Creates random 6 digit OTP
-
+        otp += str(random.randint(0, 9))
     subject = "Your OTP Code"
     body = f"Your OTP code is: {otp}"
     em = EmailMessage()
@@ -197,7 +154,6 @@ def otp_sender(client):
     em['To'] = client
     em['Subject'] = subject
     em.set_content(body)
-
     try:
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as smtp:
             smtp.ehlo()
@@ -207,17 +163,11 @@ def otp_sender(client):
             smtp.send_message(em)
         return otp
     except:
-        # The client email is incorrect or there is an issue with SMTP server
         return False
 
-
 def handle_client(connstream, current_session):
-    """
-    Handles messages coming in from the clients
-    """
     try:
         data = connstream.recv(4096).decode()
-
         if data.startswith('CHECK_USERNAME'):
             _, username = data.split(',')
             print(f'Checking username exists: {username}')
@@ -229,7 +179,6 @@ def handle_client(connstream, current_session):
                 print("Sending username is available to use")
                 connstream.send(b'USERNAME_AVAILABLE')
                 print("\nEnter a communication message to add: ", end="")
-
         elif data.startswith('REGISTER'):
             _, username, contact_info, password, = data.split(',')
             print("Attempting to register user")
@@ -238,7 +187,6 @@ def handle_client(connstream, current_session):
             connstream.send(f'REGISTRATION_SUCCESS,{hashed_password}'.encode())
             print("User registered")
             print("\nEnter a communication message to add: ", end="")
-
         elif data.startswith('LOGIN'):
             _, username, password = data.split(',')
             print("Checking if username and password match")
@@ -253,7 +201,6 @@ def handle_client(connstream, current_session):
                 print("Username and password don't match")
                 connstream.send(b'LOGIN_FAILED')
                 print("\nEnter a communication message to add: ", end="")
-
         elif data.startswith('OTP_REQUEST'):
             _, email, = data.split(',')
             print("Requesting OTP from SMTP server")
@@ -267,7 +214,6 @@ def handle_client(connstream, current_session):
                 print(f"OTP couldn't be sent to {email}")
                 print("\nEnter a communication message to add: ", end="")
                 connstream.send('OTP_FAIL'.encode())
-
         elif data.startswith('OTP_TRY'):
             _, otp_guess = data.split(',')
             print("Checking if OTP entered is correct")
@@ -280,7 +226,6 @@ def handle_client(connstream, current_session):
                 print("OTP entered is incorrect")
                 print("\nEnter a communication message to add: ", end="")
                 connstream.send('OTP_WRONG'.encode())
-
         elif data.startswith('MODIFYPWD'):
             print("Request to modify client password details received")
             _, username, contact_info, password, = data.split(',')
@@ -289,7 +234,6 @@ def handle_client(connstream, current_session):
             connstream.send(f'SAVED, {hashed_password}'.encode())
             print("Modified details")
             print("\nEnter a communication message to add: ", end="")
-
         elif data.startswith('MODIFY'):
             print("Request to modify client details received")
             _, username, contact_info, password, = data.split(',')
@@ -297,7 +241,6 @@ def handle_client(connstream, current_session):
             connstream.send(b'SAVED')
             print("Modified details")
             print("\nEnter a communication message to add: ", end="")
-
         elif data.startswith('COMMUNICATIONS'):
             print("Request to send communications to client")
             preset_communications = "\n".join(current_session.get_communications())
@@ -305,7 +248,6 @@ def handle_client(connstream, current_session):
             connstream.send(response.encode())
             print("Communications sent")
             print("\nEnter a communication message to add: ", end="")
-
         else:
             print("Invalid request arrived")
             connstream.send(b'INVALID_REQUEST')
@@ -315,40 +257,25 @@ def handle_client(connstream, current_session):
         print("\nEnter a communication message to add: ", end="")
 
 def add_communication_thread(current_session):
-    """
-    Allows company to add neew communications messages onto the list of communications
-    """
     while True:
         string = f"\nCommunications list: {str(current_session.get_communications())}"
         print(string)
-
         print("Enter a communication message to add: ", end="")
         entry = input("")
-
         if entry:
             print(f"Message added to communications list: {entry}")
             current_session.add_communications(entry)
 
-
 def main():
-    """
-    Creates a socket for connections from server using TLS 1.3 and certificate and private key.
-    Creates a thread to add communications.
-    Runs handle client every time a connection to server is made.
-    """
     current_session = Session()
     bindsocket = socket.socket()
-    bindsocket.bind(('127.0.0.1', 4443))  # Local machine IP address
+    bindsocket.bind(('127.0.0.1', 4443))
     bindsocket.listen(5)
-
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-    context.minimum_version = ssl.TLSVersion.TLSv1_3  # TLS 1.3
-    context.load_cert_chain(certfile='db_server_cert.crt',
-                            keyfile='db_server_key.key')
+    context.minimum_version = ssl.TLSVersion.TLSv1_3
+    context.load_cert_chain(certfile=TLS_CERT_FILE, keyfile=TLS_KEY_FILE)
     print(f"Server is listening on {bindsocket.getsockname()}...")
-    threading.Thread(target=add_communication_thread,
-                     args=(current_session,), daemon=True).start()
-
+    threading.Thread(target=add_communication_thread, args=(current_session,), daemon=True).start()
     while True:
         newsocket, fromaddr = bindsocket.accept()
         print("\nConnected")
@@ -358,7 +285,6 @@ def main():
         finally:
             connstream.shutdown(socket.SHUT_RDWR)
             connstream.close()
-
 
 if __name__ == '__main__':
     main()
