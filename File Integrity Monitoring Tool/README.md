@@ -14,7 +14,7 @@ The folder should consist of the main.rs code file. In this file, the directory 
 
 An empty integrity log file with headers (integrity_log.csv) will also be attached.
 
-The Cargo.toml file contains dependency version the program needs.
+The Cargo.toml file contains the dependency version the program needs.
 
 An empty folder labelled test_directory is attached in the program folder. New files can be created in here to test the functionality of the program.
 
