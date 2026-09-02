@@ -5,7 +5,7 @@ This project is a secure, full-stack, containerised Flask-based e-commerce web a
 It integrates secure coding practices, automated testing, and CI/CD deployment pipelines, allowing security practices to be incorporated during development rather than after, thereby classifying the work as part of a Secure SDLC.
 
 ---
-The web application is a simple e-commerce website and is created using both a back-end and a front-end, along with a connected SQL database.  
+The web application is a simple e-commerce website and is created using both back-end and front-end, along with a connected SQL database.  
 
 The website has been developed using HTML for templates, JavaScript for interactive components, CSS for styling and Python for the back-end.  
 
