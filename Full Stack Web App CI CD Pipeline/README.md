@@ -36,7 +36,7 @@ Before these steps, the GitHub workflow should have been completed and should ha
 
 2. Run the container with the required secret:\
   docker run -d -p 5000:5000 \
-    -e SECRET_KEY=90c519ae5f6939826bb52e0a678ef0f03ca54b8417152857 \
+    -e SECRET_KEY=############################### \   # Commented out for security purposes.
     --name securecart sukhpreetsahi5/securecart-app:latest
    
 3. Open the app using this URL in a browser:\
