@@ -1,4 +1,4 @@
-# SecureCart – Flask Web Application with CI/CD and Security Testing.
+# SecureCart – Flask Web Application with CI/CD and Security Testing
 
 This project is a secure, full-stack, containerised Flask-based e-commerce web application developed as part of my Cyber Context of Software Engineering module coursework. 
 
