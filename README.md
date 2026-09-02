@@ -2,7 +2,7 @@
 
 Welcome to my portfolio repository!  
 
-I am currently a 3rd year BSc Cyber Security Student at the University of Warwick.
+I am a BSc Cyber Security graduate from the University of Warwick.
 
 This GitHub repo showcases some of my projects for Cyber Security.  
 
