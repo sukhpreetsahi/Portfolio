@@ -48,5 +48,13 @@ Before these steps, the GitHub workflow should have been completed and should ha
 Note:
 This is a sample testing scenario, hence the secret key is provided here. The secret key would be kept hidden otherwise.
 
-## Website Screenshot
+## Website Screenshots
+<img width="1908" height="751" alt="Login page" src="https://github.com/user-attachments/assets/dbf4b5a7-4045-4c33-8021-d531436a4133" />
+<img width="1911" height="701" alt="Viewing cart" src="https://github.com/user-attachments/assets/a31fd0ef-ea6b-4059-9ea4-2965a6b858d3" />
+<img width="1334" height="354" alt="Viewing Own Orders" src="https://github.com/user-attachments/assets/152fd12c-16b4-4862-8b04-fc4cdb17c560" />
+<img width="1328" height="438" alt="Editing Product Details" src="https://github.com/user-attachments/assets/ccfaf0a5-d8d1-4ae9-a8c1-bc93d30dfe48" />
+<img width="640" height="811" alt="Checkout page" src="https://github.com/user-attachments/assets/b1485093-3b0d-477e-aa90-7fcb25bc672a" />
+<img width="510" height="351" alt="Editing Password" src="https://github.com/user-attachments/assets/b7d01747-cf0b-4ef3-8cc1-3b587a4574e1" />
+<img width="940" height="872" alt="Password requirements being met" src="https://github.com/user-attachments/assets/a5781d02-7f0f-4a98-a3da-652abb6eff1f" />
+
 
