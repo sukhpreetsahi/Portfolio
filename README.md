@@ -1,17 +1,10 @@
 # 👋 Hi, I'm Sukhpreet Sahi
 
-Welcome to my cybersecurity portfolio! I'm a **BSc Cyber Security graduate** from the **University of Warwick**, passionate about building secure applications and developing cutting-edge security solutions.
+Welcome to my cybersecurity portfolio! I'm a **BSc Cyber Security graduate** from the **University of Warwick**, passionate about building secure projects and developing security solutions.
 
-This repository showcases my projects in cybersecurity, full-stack development, and secure coding practices. Some projects are from university coursework, while others are personal initiatives to develop practical skills and security expertise.
+This repository showcases my projects in cybersecurity, full-stack development, and secure coding practices. Some projects are from university coursework, while others are personal initiatives to develop practical skills and security expertise across a variety of security domains.
 
----
-
-## 🎯 About Me
-
-- 🎓 **Education**: BSc Cyber Security, University of Warwick
-- 🔒 **Expertise**: Secure SDLC, DevSecOps, Cryptography, Application Security
-- 💻 **Focus**: Building secure, scalable applications with industry best practices
-- 🚀 **Mission**: Integrating security by design rather than as an afterthought
+🚀 **Mission**: Integrating security by design rather than as an afterthought
 
 ---
 
@@ -42,14 +35,14 @@ This repository showcases my projects in cybersecurity, full-stack development, 
 
 ### 🔹 [SecureCart: E-Commerce Web App with CI/CD Pipeline](./Full-Stack-Web-App-CI-CD-Pipeline)
 
-A production-ready, full-stack e-commerce application built with **security-first principles**.
+A full-stack e-commerce application built with **security-first principles**.
 
 **Key Features:**
 - 🎯 Flask backend with role-based access control (RBAC)
 - 🎨 Responsive HTML/CSS/JavaScript frontend
 - 🔐 Secure authentication with sessions & strong password policies
 - 📦 PostgreSQL database with proper schema design
-- 🐳 Docker containerization for consistency
+- 🐳 Docker containerisation for consistency
 - ✅ Automated CI/CD pipeline with GitHub Actions
 - 🔍 Integrated security scanning (Snyk SAST/SCA + OWASP ZAP DAST)
 - 🔑 Secrets management via GitHub Secrets
@@ -68,7 +61,7 @@ A high-performance cybersecurity tool written in **Rust** for real-time file sys
 - 🔄 Smart file rename detection using hash comparison
 - 📊 CSV logging for audit trails
 - ⚡ High-performance Rust implementation
-- 🛡️ Prevention of ransomware and unauthorized modifications
+- 🛡️ Prevention of ransomware and unauthorised modifications
 
 **Technologies**: Rust, Cargo, File I/O, Cryptographic Hashing
 
@@ -108,17 +101,6 @@ A comprehensive patient and appointment management system with a **Tkinter GUI**
 
 ---
 
-## 📊 Repository Overview
-
-| Language | Percentage |
-|----------|-----------|
-| Python   | 70.5% |
-| HTML     | 24.8% |
-| Rust     | 3.9% |
-| Other    | 0.8% |
-
----
-
 ## 🎓 Key Competencies Demonstrated
 
 ✅ **Secure Development**  
@@ -139,36 +121,9 @@ A comprehensive patient and appointment management system with a **Tkinter GUI**
 
 ✅ **Software Engineering**  
 - Full-stack web development  
-- Database design & optimization  
+- Database design & optimisation  
 - Object-oriented & modular design  
 - API design & implementation  
-
----
-
-## 🚀 How to Explore These Projects
-
-Each project folder contains:
-- **README.md** - Detailed project overview, setup instructions, and key features
-- **Source code** - Well-commented and organized
-- **Screenshots/Videos** - Visual demonstration of functionality
-- **Setup guides** - Step-by-step instructions to run locally
-
-Clone this repository and navigate to any project to get started:
-
-```bash
-git clone https://github.com/sukhpreetsahi/Portfolio.git
-cd Portfolio
-```
-
----
-
-## 💡 Learning & Development
-
-I'm continuously learning and developing new skills in:
-- 🔐 Advanced cryptography and security protocols
-- 🌐 Cloud security (AWS, Azure)
-- 🤖 Security automation and orchestration
-- 📱 Mobile application security
 
 ---
 
@@ -182,10 +137,8 @@ I'm continuously learning and developing new skills in:
 
 ## 📜 License
 
-This repository is public and available for educational and portfolio purposes.
+This repository is public and available for portfolio purposes.
 
 ---
-
-⭐ **If you find these projects helpful or interesting, feel free to give them a star!**
 
 Thank you for visiting my portfolio. I'm always open to feedback, collaboration, and new opportunities! 🚀
