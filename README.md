@@ -1,6 +1,6 @@
 # 👋 Hi, I'm Sukhpreet Sahi
 
-🎓 **BSc Cyber Security graduate — University of Warwick**  
+🎓 **BSc Cyber Security graduate**  
 🔐 **Cybersecurity | Security Operations | Incident Response | Secure Development**
 
 I'm a cybersecurity graduate interested in how attacks can be **detected, investigated and mitigated**, while building software with security considered from the start.
@@ -13,7 +13,7 @@ This portfolio contains selected university projects that demonstrate practical 
 
 ## 🔎 Featured Projects
 
-### 🛡️ [DevSecOps Secure Web Application](./securecart)
+### 🛡️ [DevSecOps Secure Web Application](./DevSecOps Web Application)
 
 A full-stack Flask e-commerce application demonstrating security integrated into the software development lifecycle.
 
@@ -30,7 +30,7 @@ A full-stack Flask e-commerce application demonstrating security integrated into
 
 ---
 
-### 🦀 [Rust File Integrity Monitor](./file-integrity-monitor)
+### 🦀 [Rust File Integrity Monitor](./Rust File Integrity Monitor)
 
 A Rust-based file integrity monitoring tool that creates file snapshots and compares them across runs to identify suspicious changes.
 
@@ -44,7 +44,7 @@ A Rust-based file integrity monitoring tool that creates file snapshots and comp
 
 ---
 
-### 🔐 [Secure Investment Management System](./secure-investment-system)
+### 🔐 [Secure Investment Management System](./Secure Investment System)
 
 A client-server investment management system designed around confidentiality, integrity and authenticity requirements.
 
@@ -67,12 +67,6 @@ A client-server investment management system designed around confidentiality, in
 **Programming:** `Python` `Rust` `JavaScript` `SQL` `Java`
 
 **Tools & Technologies:** `Splunk` `Wireshark` `Ghidra` `Volatility` `GDB` `Docker` `GitHub Actions` `Snyk` `OWASP ZAP` `Flask` `PostgreSQL`
-
----
-
-## 🎓 Education
-
-**BSc Cyber Security — University of Warwick**
 
 ---
 
