@@ -1,16 +1,16 @@
 name: Secure CI/CD Pipeline
-# This workflow builds a Docker image, and performs security scans using Snyk.
-# It is triggered on pushes and pull requests to the main branch.
+# Builds the web application and performs security scans using Snyk.
+# Triggered when the SecureCart project changes.
 
 on:
   push:
     branches: [ main ]
     paths:
-      - 'Full Stack Web App CI CD Pipeline/**'
+      - 'securecart/**'
   pull_request:
     branches: [ main ]
     paths:
-      - 'Full Stack Web App CI CD Pipeline/**'
+      - 'securecart/**'
 
 jobs:
   build-and-test-ci:
@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r 'Full Stack Web App CI CD Pipeline/requirements.txt'
+          pip install -r 'securecart/requirements.txt'
 
       - name: Install Snyk CLI
         run: npm install -g snyk
@@ -38,10 +38,10 @@ jobs:
         run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
       - name: Snyk Open Source Scan SCA
-        run: snyk test --file='Full Stack Web App CI CD Pipeline/requirements.txt' --package-manager=pip
+        run: snyk test --file='securecart/requirements.txt' --package-manager=pip
 
       - name: Snyk Code Scan SAST
-        run: snyk code test 'Full Stack Web App CI CD Pipeline'
+        run: snyk code test 'securecart'
 
   docker-deployment-cd:
     name: Docker Deployment
@@ -56,7 +56,7 @@ jobs:
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
       - name: Build Docker image
-        run: docker build -t sukhpreetsahi5/securecart-app:latest 'Full Stack Web App CI CD Pipeline'/
+        run: docker build -t sukhpreetsahi5/securecart-app:latest 'securecart/'
 
       - name: Push Docker image
         run: docker push sukhpreetsahi5/securecart-app:latest
