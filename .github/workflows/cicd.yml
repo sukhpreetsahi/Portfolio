@@ -7,10 +7,12 @@ on:
     branches: [ main ]
     paths:
     - 'Full Stack Web App CI CD Pipeline/**'
+    - 'Full-Stack-Web-App-CI-CD-Pipeline/**'
   pull_request:
     branches: [ main ]
     paths:
     - 'Full Stack Web App CI CD Pipeline/**'
+    - 'Full-Stack-Web-App-CI-CD-Pipeline/**'
 
 jobs:
   build-and-test-ci:
@@ -26,10 +28,36 @@ jobs:
       with:
         python-version: '3.12'
 
+    - name: Detect project directory
+      run: |
+        if [ -d "Full-Stack-Web-App-CI-CD-Pipeline" ]; then
+          echo "PROJECT_DIR=Full-Stack-Web-App-CI-CD-Pipeline" >> $GITHUB_ENV
+        elif [ -d "Full Stack Web App CI CD Pipeline" ]; then
+          echo "PROJECT_DIR=Full Stack Web App CI CD Pipeline" >> $GITHUB_ENV
+        else
+          echo "PROJECT_DIR=" >> $GITHUB_ENV
+        fi
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r 'Full Stack Web App CI CD Pipeline/requirements.txt'
+        if [ -z "$PROJECT_DIR" ]; then
+          echo "No project directory found. Looking for requirements.txt at repo root..."
+          if [ -f "requirements.txt" ]; then
+            pip install -r requirements.txt
+          else
+            echo "No requirements.txt found; skipping dependency install."
+          fi
+        else
+          REQ="$PROJECT_DIR/requirements.txt"
+          if [ -f "$REQ" ]; then
+            pip install -r "$REQ"
+          else
+            echo "Requirements file not found at $REQ";
+            ls -la "$PROJECT_DIR" || true;
+            exit 1;
+          fi
+        fi
 
     - name: Install Snyk CLI
       run: npm install -g snyk
@@ -38,10 +66,25 @@ jobs:
       run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
     - name: Snyk Open Source Scan SCA
-      run: snyk test --file='Full Stack Web App CI CD Pipeline/requirements.txt' --package-manager=pip
+      run: |
+        if [ -z "$PROJECT_DIR" ]; then
+          echo "No project directory detected, attempting to run snyk against requirements.txt in repo root"
+          if [ -f requirements.txt ]; then
+            snyk test --file=requirements.txt --package-manager=pip
+          else
+            echo "No requirements.txt to scan"; exit 0;
+          fi
+        else
+          snyk test --file="$PROJECT_DIR/requirements.txt" --package-manager=pip
+        fi
 
     - name: Snyk Code Scan SAST
-      run: snyk code test 'Full Stack Web App CI CD Pipeline'
+      run: |
+        if [ -z "$PROJECT_DIR" ]; then
+          snyk code test .
+        else
+          snyk code test "$PROJECT_DIR"
+        fi
 
   docker-deployment-cd:
     name: Docker Deployment
@@ -52,11 +95,27 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Detect project directory
+      run: |
+        if [ -d "Full-Stack-Web-App-CI-CD-Pipeline" ]; then
+          echo "PROJECT_DIR=Full-Stack-Web-App-CI-CD-Pipeline" >> $GITHUB_ENV
+        elif [ -d "Full Stack Web App CI CD Pipeline" ]; then
+          echo "PROJECT_DIR=Full Stack Web App CI CD Pipeline" >> $GITHUB_ENV
+        else
+          echo "PROJECT_DIR=" >> $GITHUB_ENV
+        fi
+
     - name: Log in to DockerHub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
     - name: Build Docker image
-      run: docker build -t sukhpreetsahi5/securecart-app:latest 'Full Stack Web App CI CD Pipeline'/
+      run: |
+        if [ -z "$PROJECT_DIR" ]; then
+          echo "No project directory detected; attempting to build from repo root"
+          docker build -t sukhpreetsahi5/securecart-app:latest .
+        else
+          docker build -t sukhpreetsahi5/securecart-app:latest "$PROJECT_DIR"/
+        fi
 
     - name: Push Docker image
       run: docker push sukhpreetsahi5/securecart-app:latest
