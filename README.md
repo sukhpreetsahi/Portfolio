@@ -13,7 +13,7 @@ This portfolio contains selected university projects that demonstrate practical 
 
 ## 🔎 Featured Projects
 
-### 🛡️ [DevSecOps Secure Web Application](./DevSecOps Web Application)
+### 🛡️ [DevSecOps Secure Web Application](./DevSecOps%20Web%20Application)
 
 A full-stack Flask e-commerce application demonstrating security integrated into the software development lifecycle.
 
@@ -30,7 +30,7 @@ A full-stack Flask e-commerce application demonstrating security integrated into
 
 ---
 
-### 🦀 [Rust File Integrity Monitor](./Rust File Integrity Monitor)
+### 🦀 [Rust File Integrity Monitor](./Rust%20File%20Integrity%20Monitor)
 
 A Rust-based file integrity monitoring tool that creates file snapshots and compares them across runs to identify suspicious changes.
 
@@ -44,7 +44,7 @@ A Rust-based file integrity monitoring tool that creates file snapshots and comp
 
 ---
 
-### 🔐 [Secure Investment Management System](./Secure Investment System)
+### 🔐 [Secure Investment Management System](./Secure%20Investment%20System)
 
 A client-server investment management system designed around confidentiality, integrity and authenticity requirements.
 
