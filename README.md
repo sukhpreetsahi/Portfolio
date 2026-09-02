@@ -32,7 +32,7 @@ A full-stack demo E-commerce web application with:
 - Secured via CI/CD pipeline (Snyk + GitHub Actions + DockerHub deployment)
 - SQL Database
 
-### 🔹 [File Integrity Monitoring Tool](./File-Integrity-Monitor)
+### 🔹 [File Integrity Monitoring Tool](./File-Integrity-Monitoring-Tool)
 
 ### 🔹 [Secure CLI Investment Management System](./)
 
