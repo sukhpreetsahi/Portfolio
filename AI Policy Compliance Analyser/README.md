@@ -9,7 +9,7 @@ This project explores whether parts of security-policy compliance assessment can
 1. **Hybrid similarity analysis** — combines Sentence Transformer embeddings, cosine similarity and BM25 keyword retrieval to identify policy evidence relevant to security controls.
 2. **Local RAG + LLM analysis** — retrieves relevant policy passages and uses a locally hosted Llama 3.2 model to produce a compliance assessment, evidence and identified gaps.
 
-The original work was developed as university research. The public repository version focuses on the reusable implementation, methodology and findings rather than distributing the underlying research dataset.
+The original work was developed as university research. This portfolio version extracts the reusable engineering concepts and documents the research findings without distributing the underlying dataset.
 
 ## Why Offline Analysis?
 
@@ -46,11 +46,11 @@ Hybrid classification          Local LLM (RAG)
 
 ### Hybrid similarity
 
-The first approach combines semantic similarity from a Sentence Transformer model with BM25 keyword retrieval. The combined score is used to identify relevant evidence and classify control coverage using configurable thresholds.
+The first approach combines semantic similarity from a Sentence Transformer model with BM25 keyword retrieval. The combined score identifies relevant evidence and configurable thresholds are used to classify control coverage.
 
 ### Retrieval-Augmented Generation
 
-The second approach retrieves relevant policy passages before passing the retrieved context to a locally hosted Llama 3.2 model. The model is prompted to assess the available evidence and identify compliance gaps.
+The second approach retrieves relevant policy passages before passing the retrieved context to a locally hosted Llama 3.2 model. The model is prompted to assess the supplied evidence and identify gaps.
 
 ## Research Findings
 
@@ -61,45 +61,56 @@ Evaluation on the original research dataset produced the following results:
 | Hybrid similarity | **70.37%** | **0.6281** |
 | RAG + local LLM | 59.26% | 0.5794 |
 
-The hybrid approach performed better on the evaluated dataset. This illustrates an important result of the project: adding an LLM did not automatically produce a better compliance classifier, and retrieval and classification quality remain important factors.
+The hybrid approach performed better on the evaluated dataset. This is a useful engineering finding: adding an LLM did not automatically improve classification quality, and retrieval quality and threshold calibration remained important factors.
 
-The underlying evaluation dataset is intentionally not published.
+These figures are **reported research results, not a claim that the public repository reproduces the original experiment**. The original evaluation data is intentionally not published.
 
-## Security and Privacy Considerations
+## Security & Privacy Considerations
 
 - Policy documents are treated as potentially sensitive input.
 - The public repository does not contain the original policy dataset.
 - Generated policy chunks and organisation-specific evaluation data are excluded.
-- Secrets and local credentials should never be committed to the repository.
-- Automated classifications should be treated as decision support rather than evidence of ISO certification or a replacement for human assessment.
+- Secrets and local credentials should never be committed.
+- Automated classifications are decision support and are not evidence of ISO certification or a replacement for human assessment.
 
 ## Project Structure
 
 ```text
 AI Policy Compliance Analyser/
 ├── README.md
+├── requirements.txt
+├── .gitignore
 ├── docs/
 │   ├── methodology.md
 │   ├── evaluation.md
 │   └── limitations.md
 └── src/
+    ├── controls.py
+    ├── model_loader.py
+    ├── preprocessor.py
+    ├── rag.py
+    ├── similarity.py
     └── README.md
 ```
 
-The `src/` directory is intended for the sanitised implementation extracted from the original research code. Original research data should remain outside the public repository.
+The implementation accepts policy/control content supplied by the user rather than bundling the original research corpus.
 
 ## Technologies
 
-`Python` `Sentence Transformers` `MPNet` `BM25` `RAG` `Llama 3.2` `NLP` `ISO/IEC 27001` `Information Security`
+`Python` `Sentence Transformers` `MPNet` `BM25` `RAG` `Llama 3.2` `Ollama` `NLP` `ISO/IEC 27001` `Information Security`
 
 ## Academic Context
 
 Developed as part of university research investigating automated security-policy compliance assessment using NLP and locally hosted language models.
 
+## Limitations
+
+This is a research prototype. A policy statement is not proof that a control is implemented effectively, and text similarity can miss context, scope and exceptions. LLM output can also be inconsistent. Results therefore require human validation.
+
 ## Future Improvements
 
 - Add a public synthetic demonstration dataset.
-- Provide automated evaluation against a reproducible test set.
+- Add automated tests and a reproducible public benchmark.
 - Improve explainability and evidence traceability.
-- Add unit and integration tests.
-- Package the analyser as a reusable CLI application.
+- Add a CLI application when the project needs one.
+- Explore more robust calibration and retrieval strategies.
