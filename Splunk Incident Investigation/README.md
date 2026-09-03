@@ -52,13 +52,13 @@ For a visual view of how the two attacks developed, see [`investigation/attack_c
 
 ## Detection coverage
 
-| File | Technique | What it looks for |
+| File | MITRE ATT&CK | What it looks for |
 |---|---|---|
-| [`brute_force.spl`](detections/brute_force.spl) | T1110 | Large numbers of password attempts against the Joomla administrator page |
-| [`malicious_file_upload.spl`](detections/malicious_file_upload.spl) | T1105 | Executable or script files being uploaded through HTTP POST requests |
-| [`c2_beaconing.spl`](detections/c2_beaconing.spl) | T1071 | Repeated outbound connections to the same external destination |
-| [`ransomware_activity.spl`](detections/ransomware_activity.spl) | T1486 | Large numbers of document files being changed in a short period |
-| [`suspicious_temp_execution.spl`](detections/suspicious_temp_execution.spl) | T1059 | Script tools starting temporary `.tmp` files |
+| [`brute_force.spl`](detections/brute_force.spl) | **T1110 - Brute Force** | Large numbers of password attempts against the Joomla administrator page |
+| [`malicious_file_upload.spl`](detections/malicious_file_upload.spl) | **T1105 - Ingress Tool Transfer** | Executable or script files being uploaded through HTTP POST requests |
+| [`c2_beaconing.spl`](detections/c2_beaconing.spl) | **T1071 - Application Layer Protocol** | Repeated outbound connections to the same external destination |
+| [`ransomware_activity.spl`](detections/ransomware_activity.spl) | **T1486 - Data Encrypted for Impact** | Large numbers of document files being changed in a short period |
+| [`suspicious_temp_execution.spl`](detections/suspicious_temp_execution.spl) | **T1059 - Command and Scripting Interpreter** | Script tools starting temporary `.tmp` files |
 
 The detection files contain the SPL used to look for these behaviours.
 
