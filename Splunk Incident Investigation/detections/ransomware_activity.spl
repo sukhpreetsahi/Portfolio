@@ -1,4 +1,13 @@
-/* Case #51489 — Detecting Ransomware Attacks
- * Source: incident analysis report, Detection Rules §3.4.
- * The report's complete Splunk query is preserved in the supplied project package.
- */
+index=botsv1 (
+    (sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=2 TargetFilename="C:\\Users\\*")
+    OR
+    (sourcetype="WinEventLog:Security" EventCode=5145 Access_Mask=0x12019F)
+)
+| eval modified_file=coalesce(TargetFilename, Relative_Target_Name)
+| eval source_system=coalesce(Source_Address, host)
+| where match(modified_file,"(?i)\.(txt|pdf|docx?|xlsx?|pptx?)$")
+| bin _time span=2m
+| stats dc(modified_file) as files_modified values(modified_file) as sample_files by _time source_system
+| where files_modified >= 50
+| table _time source_system files_modified sample_files
+| sort -files_modified
