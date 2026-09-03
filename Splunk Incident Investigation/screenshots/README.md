@@ -9,5 +9,7 @@ These images show the main stages of the investigation in Splunk. They are inclu
 | `malicious_upload.png` | The suspicious file upload activity on the web server. |
 | `ransomware_detection.png` | The large number of file changes linked to the ransomware activity. |
 | `attack_timeline.png` | The main events placed in order to show how the two attacks developed. |
+|`C2_behaviour_detection.png` | Communication with external C2 IP address activity. |
+|`temp_file_execution.png` | Execution of the temporary file. |
 
 The screenshots can be viewed alongside the SPL files in `../detections/` and the investigation notes in `../investigation/`.
