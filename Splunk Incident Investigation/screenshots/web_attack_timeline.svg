@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="190" viewBox="0 0 900 190">
+<rect width="900" height="190" fill="white"/>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#111} .h{font-weight:700;font-size:18px}.c{font-size:16px}</style>
+<rect x="12" y="12" width="876" height="166" fill="none" stroke="#444" stroke-width="2"/>
+<path d="M12 48H888M215 12V178M450 12V178" stroke="#777" stroke-width="1"/>
+<text x="28" y="36" class="h">Timestamp</text><text x="234" y="36" class="h">Kill Chain Phase</text><text x="469" y="36" class="h">Event</text>
+<path d="M12 87H888M12 126H888M12 153H888" stroke="#777" stroke-width="1"/>
+<text x="22" y="72" class="c">10/08/2016 21:46:51</text><text x="225" y="72" class="c">Exploitation</text><text x="465" y="72" class="c">Brute force attempt started</text>
+<text x="22" y="104" class="c">10/08/2016 21:48:05</text><text x="225" y="104" class="c">Exploitation / Initial Access</text><text x="465" y="99" class="c">Correct credential entered,</text><text x="465" y="118" class="c">providing access to the dashboard</text>
+<text x="22" y="143" class="c">10/08/2016 21:52:47</text><text x="225" y="143" class="c">Installation</text><text x="465" y="143" class="c">Executable uploaded</text>
+</svg>

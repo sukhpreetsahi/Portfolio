@@ -1,0 +1,7 @@
+index=botsv1 sourcetype="stream:http" site="imreallynotbatman.com" http_method=POST
+ dest_content="*action*upload*"
+| eval uploaded_file='part_filename{}'
+| mvexpand uploaded_file
+| where match(uploaded_file,"(?i)\.(exe|dll|scr|msi|php|aspx|jsp|ps1|bat|cmd|vbs)$")
+| rename src as uploader_ip
+| table _time uploader_ip uploaded_file dest_ip request

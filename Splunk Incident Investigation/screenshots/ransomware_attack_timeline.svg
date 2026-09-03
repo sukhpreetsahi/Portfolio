@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="285" viewBox="0 0 900 285">
+<rect width="900" height="285" fill="white"/>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#111}.h{font-weight:700;font-size:18px}.c{font-size:16px}</style>
+<rect x="12" y="12" width="876" height="261" fill="none" stroke="#444" stroke-width="2"/>
+<path d="M12 48H888M215 12V273M450 12V273" stroke="#777" stroke-width="1"/>
+<text x="28" y="36" class="h">Timestamp</text><text x="234" y="36" class="h">Kill Chain Phase</text><text x="469" y="36" class="h">Event</text>
+<path d="M12 87H888M12 122H888M12 157H888M12 192H888M12 227H888" stroke="#777" stroke-width="1"/>
+<text x="22" y="72" class="c">24/08/2016 16:43:21</text><text x="225" y="72" class="c">Delivery</text><text x="465" y="72" class="c">Miranda_Tate_unveiled.dotm</text><text x="465" y="91" class="c">document executed</text>
+<text x="22" y="107" class="c">24/08/2016 16:43:21</text><text x="225" y="107" class="c">Exploitation</text><text x="465" y="107" class="c">VBScript executed via malicious</text><text x="465" y="126" class="c">macro</text>
+<text x="22" y="142" class="c">24/08/2016 16:48:21</text><text x="225" y="142" class="c">Installation</text><text x="465" y="142" class="c">Temporary malicious payload</text><text x="465" y="161" class="c">executed</text>
+<text x="22" y="177" class="c">24/08/2016 17:04:31</text><text x="225" y="177" class="c">Actions on Objectives</text><text x="465" y="177" class="c">First text file encrypted</text>
+<text x="22" y="212" class="c">24/08/2016 17:05:47</text><text x="225" y="212" class="c">Actions on Objectives</text><text x="465" y="212" class="c">Last text file encrypted</text>
+<text x="22" y="247" class="c">24/08/2016 17:10:01</text><text x="225" y="247" class="c">Actions on Objectives</text><text x="465" y="247" class="c">First PDF file encrypted</text>
+<text x="22" y="267" class="c">24/08/2016 17:13:04</text><text x="225" y="267" class="c">Actions on Objectives</text><text x="465" y="267" class="c">Last PDF file encrypted</text>
+</svg>

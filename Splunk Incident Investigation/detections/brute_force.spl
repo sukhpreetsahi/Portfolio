@@ -1,1 +1,7 @@
-
+index="botsv1" sourcetype="stream:http" site="imreallynotbatman.com" http_method=POST uri="/joomla/administrator/index.php"
+| rex field=form_data "(?i)passwd=(?<attempted_password>[^&]+)"
+| bucket _time span=2m
+| stats count as login_attempts dc(attempted_password) as unique_passwords values(http_user_agent) as user_agent by _time src_ip
+| where login_attempts >= 100 OR unique_passwords >= 80
+| table _time src_ip login_attempts unique_passwords user_agent
+| sort -login_attempts
