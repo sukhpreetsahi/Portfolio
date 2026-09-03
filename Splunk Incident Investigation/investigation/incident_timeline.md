@@ -1,35 +1,41 @@
 # Incident Timeline
 
-This timeline reconstructs two separate compromise paths from the available Splunk telemetry. The timestamps are presented in chronological order so the investigation can be followed from first observable action to impact.
+This timeline shows the main events found during the investigation. It is split into the web server incident and the ransomware incident so the sequence is easy to follow.
 
-## Web-server compromise — 10 August 2016
+## Web server compromise
 
-| Timestamp | Phase | Event | Significance |
-|---|---|---|---|
-| 21:46:51 | Initial access | Automated brute-force activity begins against `/joomla/administrator/index.php` from `23.22.63.114`. | High-volume credential guessing establishes the initial access attempt. |
-| 21:48:05 | Initial access | `40.80.148.42` submits the correct password and receives the Joomla dashboard. | Confirms successful authentication using the compromised administrator credential. |
-| 21:52:47 | Post-compromise | `3791.exe` is uploaded to the web server. | Indicates the attacker moved from credential access to introducing a payload. |
-| 21:52:47 | Post-compromise | `agent.php` is observed in the same upload activity. | Suggests the attacker also introduced server-side script functionality. |
+**10 August 2016**
 
-### Timing observations
+| Time | What happened | Why it matters |
+|---|---|---|
+| 21:46:51 | `23.22.63.114` began sending repeated POST requests to `/joomla/administrator/index.php`. | This was the start of the password guessing activity. |
+| 21:48:05 | `40.80.148.42` entered the correct password and reached the Joomla dashboard. | This shows that the login attack was successful. |
+| 21:52:47 | `3791.exe` was uploaded to the web server. | The attacker moved from gaining access to placing a suspicious file on the server. |
+| 21:52:47 | `agent.php` was also seen in the upload activity. | A PHP file in the same activity adds further evidence of a server compromise. |
 
-The brute-force phase produced **412 unique password attempts in approximately 90 seconds**, making the activity inconsistent with normal interactive administration. The later successful login came from a different external address, linking the authentication phase to the subsequent server activity without assuming both phases originated from the same source.
+### What stood out
 
-## Ransomware infection — 24 August 2016
+There were **412 different password attempts in about 90 seconds**. That is not normal interactive administration and strongly suggests automated password guessing.
 
-| Timestamp | Phase | Event | Significance |
-|---|---|---|---|
-| 16:43:21 | Delivery / execution | `Miranda Tate unveiled.dotm` is executed on `we8105desk`. | Establishes the user-driven entry point. |
-| 16:43:21 | Execution | The document launches script activity through `wscript.exe`. | Shows the transition from document execution to an interpretable payload. |
-| 16:43:21 | Execution | `20429.vbs` is executed. | Identifies the script stage of the payload chain. |
-| 16:48:21 | Execution | `121214.tmp` is launched by the VBScript. | Provides the key temporary-payload execution point. |
-| 17:04:31 | Impact | First observed `.txt` file is encrypted on the workstation. | Marks the start of measurable file-impact activity. |
-| 17:05:47 | Impact | Last observed `.txt` file is encrypted on the workstation. | 406 unique text files were affected during this burst. |
-| 17:10:01 | Impact | First observed `.pdf` file is encrypted on `we9041srv`. | Shows impact extending to the network share. |
-| 17:13:04 | Impact | Last observed `.pdf` file is encrypted on `we9041srv`. | 257 unique PDF files were affected over roughly ten minutes. |
+The successful login came from a different external address. That is worth noting because it shows that the investigation should follow the sequence of events rather than assume that one IP address must be responsible for every step.
 
-## Correlation notes
+## Ransomware infection
 
-The ransomware sequence is strengthened by three independent telemetry types: Sysmon process creation events reveal the document-to-script-to-temporary-payload lineage; Sysmon network events show the workstation reaching the file server on TCP/445; and Windows Security events show rapid modification of files on the remote share.
+**24 August 2016**
 
-The overall sequence can therefore be treated as a connected execution and impact chain rather than a collection of unrelated alerts.
+| Time | What happened | Why it matters |
+|---|---|---|
+| 16:43:21 | `Miranda Tate unveiled.dotm` was opened on `we8105desk`. | This is the starting point of the ransomware activity. |
+| 16:43:21 | `wscript.exe` was used to run a script. | The document moved into script-based execution. |
+| 16:43:21 | `20429.vbs` was executed. | This identifies the next stage of the process chain. |
+| 16:48:21 | `121214.tmp` was started by the VBScript. | This is the last known stage before the file impact begins. |
+| 17:04:31 | The first `.txt` file was encrypted on `we8105desk`. | This marks the start of the visible file damage. |
+| 17:05:47 | The last observed `.txt` file was encrypted on the workstation. | **406 unique text files** were affected during this period. |
+| 17:10:01 | The first `.pdf` file was encrypted on `we9041srv`. | The impact had reached the file server. |
+| 17:13:04 | The last observed `.pdf` file was encrypted on `we9041srv`. | **257 unique PDF files** were affected. |
+
+## How the events fit together
+
+The ransomware timeline is supported by several types of log data. Process logs show the document leading to `wscript.exe`, then `20429.vbs`, and finally `121214.tmp`. Network logs show the workstation connecting to the file server over TCP/445. Windows Security logs then show the large number of file changes.
+
+Taken together, these events give a clear sequence from document execution to local file encryption and then impact on the shared file server.
