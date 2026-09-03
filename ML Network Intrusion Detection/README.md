@@ -1,6 +1,6 @@
 # Machine Learning Network Intrusion Detection
 
-A supervised machine-learning project for classifying network traffic as **normal** or **malicious** using the CIC-IDS2017 intrusion-detection dataset.
+A supervised machine-learning project for classifying network traffic as **normal** or **malicious** using the [CIC-IDS2017](https://www.unb.ca/cic/datasets/ids-2017.html) intrusion-detection dataset.
 
 The project compares **Random Forest** and **LightGBM**, with preprocessing, feature selection, class-imbalance handling, hyperparameter tuning and final evaluation.
 
