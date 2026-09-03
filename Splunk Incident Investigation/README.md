@@ -44,19 +44,35 @@ A workstation ran the file `Miranda Tate unveiled.dotm` from removable media. Th
 - **257 unique `.pdf` files** were affected on the file server.
 - The ransomware execution path was `Miranda Tate unveiled.dotm` -> `wscript.exe` -> `20429.vbs` -> `121214.tmp`.
 
+For the full investigation notes and how these events were linked together, see [`investigation/findings.md`](investigation/findings.md).
+
+For the full timeline, including the timestamp, event, and kill chain tables, see [`investigation/incident_timeline.md`](investigation/incident_timeline.md).
+
+For a visual view of how the two attacks developed, see [`investigation/attack_chain.md`](investigation/attack_chain.md).
+
 ## Detection coverage
 
 | File | Technique | What it looks for |
 |---|---|---|
-| `brute_force.spl` | T1110 | Large numbers of password attempts against the Joomla administrator page |
-| `malicious_file_upload.spl` | T1105 | Executable or script files being uploaded through HTTP POST requests |
-| `c2_beaconing.spl` | T1071 | Repeated outbound connections to the same external destination |
-| `ransomware_activity.spl` | T1486 | Large numbers of document files being changed in a short period |
-| `suspicious_temp_execution.spl` | T1059 | Script tools starting temporary `.tmp` files |
+| [`brute_force.spl`](detections/brute_force.spl) | T1110 | Large numbers of password attempts against the Joomla administrator page |
+| [`malicious_file_upload.spl`](detections/malicious_file_upload.spl) | T1105 | Executable or script files being uploaded through HTTP POST requests |
+| [`c2_beaconing.spl`](detections/c2_beaconing.spl) | T1071 | Repeated outbound connections to the same external destination |
+| [`ransomware_activity.spl`](detections/ransomware_activity.spl) | T1486 | Large numbers of document files being changed in a short period |
+| [`suspicious_temp_execution.spl`](detections/suspicious_temp_execution.spl) | T1059 | Script tools starting temporary `.tmp` files |
+
+The detection files contain the SPL used to look for these behaviours.
 
 ## Evidence
 
-The `screenshots` folder contains the main visual evidence used during the investigation. The timeline images are also included in `incident_timeline.md` so the sequence of events can be understood without reading the full investigation notes first.
+The [`screenshots`](screenshots/) folder contains the visual evidence from the investigation. It includes the Splunk search results, detection results, process activity, communication activity, and the two attack timelines.
+
+See the [`screenshots/README.md`](screenshots/README.md) for the images in order with a short explanation of what each one shows.
+
+## MITRE ATT&CK and D3FEND
+
+The investigation also maps the main attack steps to MITRE ATT&CK and links them to defensive controls from MITRE D3FEND. This is useful when thinking about where the attack could have been stopped or where earlier detection could have helped.
+
+See [`docs/mitre-d3fend-mapping.md`](docs/mitre-d3fend-mapping.md) for the full mapping and defensive controls.
 
 ## Repository structure
 
@@ -79,7 +95,9 @@ Splunk Incident Investigation/
 │   ├── splunk_overview.png
 │   ├── brute_force_detection.png
 │   ├── malicious_upload.png
-│   └── ransomware_detection.png
+│   ├── ransomware_detection.png
+│   ├── C2_behaviour_detection.png
+│   └── temp_file_execution.png
 └── docs/
     └── mitre-d3fend-mapping.md
 ```
@@ -95,4 +113,4 @@ The main lessons from the investigation are practical controls:
 - Detect fast bursts of file changes instead of waiting for known ransomware names or hashes.
 - Limit unnecessary SMB access between workstations and servers.
 
-This project shows the full process from finding a suspicious event in Splunk to building a repeatable detection from it.
+The project links the investigation, evidence, detections, and defensive controls so that each part can be reviewed on its own or as part of the wider attack story.
