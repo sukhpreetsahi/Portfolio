@@ -1,41 +1,43 @@
 # Incident Timeline
 
-This timeline shows the main events found during the investigation. It is split into the web server incident and the ransomware incident so the sequence is easy to follow.
+This timeline brings the main events together in the order they happened. It helps show how the small pieces of log data formed two clear attack paths.
 
 ## Web server compromise
 
-**10 August 2016**
+The Joomla administrator page was targeted first. The activity moved from repeated login attempts to a successful login and then to a file upload.
 
-| Time | What happened | Why it matters |
-|---|---|---|
-| 21:46:51 | `23.22.63.114` began sending repeated POST requests to `/joomla/administrator/index.php`. | This was the start of the password guessing activity. |
-| 21:48:05 | `40.80.148.42` entered the correct password and reached the Joomla dashboard. | This shows that the login attack was successful. |
-| 21:52:47 | `3791.exe` was uploaded to the web server. | The attacker moved from gaining access to placing a suspicious file on the server. |
-| 21:52:47 | `agent.php` was also seen in the upload activity. | A PHP file in the same activity adds further evidence of a server compromise. |
+![Web server attack timeline](../screenshots/web_attack_timeline.svg)
 
-### What stood out
+| Timestamp | Phase | Event | Why it matters |
+|---|---|---|---|
+| 10/08/2016 21:46:51 | Exploitation | Brute force attempt started | A large number of login attempts suggests automated password guessing. |
+| 10/08/2016 21:48:05 | Exploitation / Initial Access | Correct credential entered and dashboard access was given | This shows that the login attack led to access. |
+| 10/08/2016 21:52:47 | Installation | Executable uploaded | The attacker moved from gaining access to placing a file on the server. |
 
-There were **412 different password attempts in about 90 seconds**. That is not normal interactive administration and strongly suggests automated password guessing.
-
-The successful login came from a different external address. That is worth noting because it shows that the investigation should follow the sequence of events rather than assume that one IP address must be responsible for every step.
+A total of **412 unique password attempts** were seen in about **90 seconds** from `23.22.63.114`. A later successful login came from `40.80.148.42`. The change of source address is important, so the two events are linked by the timing and follow-on activity rather than by assuming they came from the same system.
 
 ## Ransomware infection
 
-**24 August 2016**
+The second attack started on the workstation and later reached the file server over SMB.
 
-| Time | What happened | Why it matters |
-|---|---|---|
-| 16:43:21 | `Miranda Tate unveiled.dotm` was opened on `we8105desk`. | This is the starting point of the ransomware activity. |
-| 16:43:21 | `wscript.exe` was used to run a script. | The document moved into script-based execution. |
-| 16:43:21 | `20429.vbs` was executed. | This identifies the next stage of the process chain. |
-| 16:48:21 | `121214.tmp` was started by the VBScript. | This is the last known stage before the file impact begins. |
-| 17:04:31 | The first `.txt` file was encrypted on `we8105desk`. | This marks the start of the visible file damage. |
-| 17:05:47 | The last observed `.txt` file was encrypted on the workstation. | **406 unique text files** were affected during this period. |
-| 17:10:01 | The first `.pdf` file was encrypted on `we9041srv`. | The impact had reached the file server. |
-| 17:13:04 | The last observed `.pdf` file was encrypted on `we9041srv`. | **257 unique PDF files** were affected. |
+![Ransomware attack timeline](../screenshots/ransomware_attack_timeline.svg)
 
-## How the events fit together
+| Timestamp | Phase | Event | Why it matters |
+|---|---|---|---|
+| 24/08/2016 16:43:21 | Delivery | `Miranda Tate unveiled.dotm` was executed | This is the first clear step in the ransomware execution chain. |
+| 24/08/2016 16:43:21 | Exploitation | VBScript was executed through a malicious macro | The document started scripted activity. |
+| 24/08/2016 16:48:21 | Installation | Temporary malicious payload was executed | `121214.tmp` became the next step in the execution chain. |
+| 24/08/2016 17:04:31 | Actions on Objectives | First text file was encrypted | Marks the start of the visible file impact. |
+| 24/08/2016 17:05:47 | Actions on Objectives | Last text file was encrypted | 406 unique text files were affected during this period. |
+| 24/08/2016 17:10:01 | Actions on Objectives | First PDF file was encrypted | Shows that the attack had reached the network file server. |
+| 24/08/2016 17:13:04 | Actions on Objectives | Last PDF file was encrypted | 257 unique PDF files were affected on the file server. |
 
-The ransomware timeline is supported by several types of log data. Process logs show the document leading to `wscript.exe`, then `20429.vbs`, and finally `121214.tmp`. Network logs show the workstation connecting to the file server over TCP/445. Windows Security logs then show the large number of file changes.
+## What the timeline shows
 
-Taken together, these events give a clear sequence from document execution to local file encryption and then impact on the shared file server.
+The two timelines make the investigation easier to follow because each phase is tied to a real event in the logs.
+
+For the web server, the important pattern is **login attack -> successful access -> file upload**.
+
+For the ransomware case, the pattern is **document execution -> script execution -> temporary payload -> file encryption -> impact on a network share**.
+
+These sequences were used to build the detection rules stored in `../detections/`.
