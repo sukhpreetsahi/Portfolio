@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+*.pdf
+*.xlsx
+*.xls
+*.csv
+# Local/private policy and model artefacts
+Policies/
+EncodedChunks/
+EncodedControls/
+Processed/
+Results/
+models/
+*.json
+.DS_Store
