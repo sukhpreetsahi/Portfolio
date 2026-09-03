@@ -44,6 +44,21 @@ A Rust-based file integrity monitoring tool that creates file snapshots and comp
 
 ---
 
+### 🔎 [Splunk Incident Investigation](./Splunk%20Incident%20Investigation)
+
+A practical Splunk investigation into two security incidents found in archived system and network logs. The project focuses on finding what happened, linking the evidence together and turning the findings into useful detections.
+
+- Investigated a Joomla web server compromise and a ransomware infection
+- Reconstructed attack timelines and kill chains from Splunk data
+- Identified key IOCs, affected systems and user activity
+- Created five Splunk detection rules for observed attack behaviour
+- Mapped attacker techniques to MITRE ATT&CK and defensive controls to MITRE D3FEND
+- Included Splunk search results and investigation timelines as visual evidence
+
+**Technologies:** `Splunk` `SPL` `MITRE ATT&CK` `MITRE D3FEND` `Sysmon` `Windows Security Logs`
+
+---
+
 ### 🔐 [Secure Investment Management System](./Secure%20Investment%20System)
 
 A client-server investment management system designed around confidentiality, integrity and authenticity requirements.
