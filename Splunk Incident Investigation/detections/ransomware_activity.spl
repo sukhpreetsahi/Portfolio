@@ -1,0 +1,4 @@
+/* Case #51489 — Detecting Ransomware Attacks
+ * Source: incident analysis report, Detection Rules §3.4.
+ * The report's complete Splunk query is preserved in the supplied project package.
+ */

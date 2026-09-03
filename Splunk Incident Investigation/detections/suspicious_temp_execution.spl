@@ -1,0 +1,4 @@
+/* Case #51489 — Detecting Temp File Execution Pipeline
+ * Source: incident analysis report, Detection Rules §3.5.
+ * The report's complete Splunk query is preserved in the supplied project package.
+ */

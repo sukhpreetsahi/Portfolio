@@ -1,1 +1,4 @@
-
+/* Case #51489 — Detecting Brute Force
+ * Source: incident analysis report, Detection Rules §3.2.
+ * The report's complete Splunk query is preserved in the supplied project package.
+ */

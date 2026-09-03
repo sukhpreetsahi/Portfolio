@@ -1,0 +1,4 @@
+/* Case #51489 — Detecting C2 Behaviour
+ * Source: incident analysis report, Detection Rules §3.3.
+ * The report's complete Splunk query is preserved in the supplied project package.
+ */
