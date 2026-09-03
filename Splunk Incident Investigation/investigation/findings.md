@@ -1,98 +1,109 @@
 # Investigation Findings
 
-This section brings together the main findings from the Splunk searches and shows how each one was supported by more than one piece of evidence where possible.
+This section brings together the main findings from the investigation. Each finding starts with what was seen in the logs, followed by why it matters and what could be done with the result.
 
-## Finding 1: Automated attack on the Joomla login page
+## Finding 1: Automated password guessing
 
-The Joomla administrator page received **412 different password attempts in about 90 seconds** from `23.22.63.114`.
+The Joomla administrator page received **412 unique password attempts in about 90 seconds** from `23.22.63.114`.
 
-The requests were sent to `/joomla/administrator/index.php` and targeted the `admin` account. The high number of attempts in such a short period makes automated password guessing the most likely explanation.
+The requests were sent to `/joomla/administrator/index.php` and targeted the `admin` account. The number of attempts in such a short period makes automated password guessing much more likely than normal administrator use.
 
-A later request from `40.80.148.42` successfully logged in and reached the Joomla dashboard. The two source addresses are important because the investigation should follow the events themselves rather than assume that the same address was used for every step.
+A later login from `40.80.148.42` used the correct password and reached the Joomla dashboard. This is a useful example of why an investigation should look at the events before and after a login rather than looking at one IP address on its own.
 
-## Finding 2: Suspicious files were uploaded after the successful login
+## Finding 2: Files were uploaded after access was gained
 
-After the successful Joomla login, the web server received two files called `3791.exe` and `agent.php`.
+After the successful Joomla login, two files were uploaded to the web server:
 
-An executable upload is unusual for a web application and should be treated as high risk. The PHP file is also important because it could be used as server-side code. The timing of the uploads, shortly after the successful login, makes this activity more suspicious than an isolated file upload.
+- `3791.exe`
+- `agent.php`
 
-## Finding 3: A document started a script-based ransomware chain
+An executable file in a web upload is a strong warning sign. The PHP file is also important because it could be used as server-side code.
 
-On `we8105desk`, process logs show this sequence:
+The timing of the upload after the successful login gives a clear link between the login activity and the later server changes.
 
-`Miranda Tate unveiled.dotm` → `wscript.exe` → `20429.vbs` → `121214.tmp`
+## Finding 3: A document led to a scripted payload
 
-The process relationships are more useful than the filenames on their own. They show that the document led to a script, which then started another file from a temporary location.
+On `we8105desk`, the process data showed this sequence:
 
-This is a useful detection point because unusual use of scripting tools can be spotted before the final damage takes place.
+```text
+Miranda Tate unveiled.dotm
+        |
+        v
+    wscript.exe
+        |
+        v
+    20429.vbs
+        |
+        v
+    121214.tmp
+```
+
+The important point is the order of execution. The document started the chain, `wscript.exe` ran the script, and the script then started the temporary payload.
+
+The name `121214.tmp` by itself does not prove that the file was malicious. The parent-child process relationship is much stronger evidence because it shows how the file was started.
 
 ## Finding 4: The workstation reached the file server over SMB
 
-Network logs show `we8105desk` (`192.168.250.100`) connecting to `we9041srv` (`192.168.250.20`) on TCP/445.
+`we8105desk` (`192.168.250.100`) connected to `we9041srv` (`192.168.250.20`) on TCP/445.
 
-This connection is important because it explains how the ransomware could reach a shared file location. The damage was therefore not limited to the original workstation.
+TCP/445 is used by SMB, which allows Windows systems to access files and shares over the network. This connection matters because file changes were later seen on the file server.
 
-## Finding 5: Large numbers of files were changed very quickly
+This helped show that the ransomware activity was not limited to the workstation.
 
-On `we8105desk`, **406 unique `.txt` files** were affected in about **5.5 minutes**.
+## Finding 5: A large number of files were changed very quickly
+
+On the workstation, **406 unique `.txt` files** were affected in about **5.5 minutes**.
 
 On `we9041srv`, **257 unique `.pdf` files** were affected over roughly **10 minutes**.
 
-The scale and speed of the file changes are very different from normal user activity. When combined with the earlier process chain and SMB connection, the evidence strongly supports ransomware behaviour.
+The speed and volume of the file changes are a strong sign of automated file encryption. This type of behaviour is useful for detection because it does not rely on a known ransomware file name or hash.
 
 ## Indicators of compromise
 
-| Type | Value | Why it matters |
+| Type | Value | Where it fits |
 |---|---|---|
-| Source IP | `23.22.63.114` | High-volume password guessing |
-| Source IP | `40.80.148.42` | Successful Joomla login and later upload activity |
-| Web payload | `3791.exe` | Suspicious executable upload |
-| Web payload | `agent.php` | Suspicious PHP upload |
+| IP address | `23.22.63.114` | High-volume Joomla password guessing |
+| IP address | `40.80.148.42` | Successful Joomla login and later upload activity |
+| Web file | `3791.exe` | Uploaded executable |
+| Web file | `agent.php` | Uploaded PHP file |
 | Document | `Miranda Tate unveiled.dotm` | Start of the ransomware execution chain |
-| Script | `20429.vbs` | Script stage in the execution chain |
-| Temporary payload | `121214.tmp` | File started by the script stage |
+| Script | `20429.vbs` | Script stage of the chain |
+| Temp file | `121214.tmp` | Payload started by the script |
 | Web server | `192.168.250.70` | Joomla server |
 | Workstation | `192.168.250.100` | Ransomware execution host |
-| File server | `192.168.250.20` | Shared server affected by file encryption |
+| File server | `192.168.250.20` | Server affected through SMB |
 
-## Impacted systems
+## What I would improve
 
-### Web server
+### Protect the Joomla administrator account
 
-`imreallynotbatman.com` at `192.168.250.70` was targeted through its Joomla administrator page. The evidence shows a password attack, a successful login, and suspicious file uploads.
+Use MFA, strong passwords, and account lockout. The administrator page should also be restricted so that it is not open to unnecessary internet traffic.
 
-### Workstation
+### Watch web uploads
 
-`we8105desk` at `192.168.250.100` was the starting point for the ransomware activity. It ran the malicious document and later connected to the file server.
+Alert when executable or server-side script files are uploaded to web directories. File integrity monitoring would also help show when application files change unexpectedly.
 
-### File server
+### Control script tools
 
-`we9041srv` at `192.168.250.20` was reached over SMB and later showed a large number of affected PDF files.
+Monitor `wscript.exe` and `cscript.exe`. A script tool starting an unusual temporary file is a useful signal and should receive extra attention.
 
-## Defensive priorities
+### Detect file encryption early
 
-### Protect administrator accounts
-
-Use MFA for important accounts. Add strong password rules and account lockout controls. Limit access to public administration pages where possible.
-
-### Watch file uploads
-
-Alert when executable or server-side script files are uploaded to web servers. File integrity monitoring can also show unexpected changes to important application files.
-
-### Watch scripting tools
-
-Monitor `wscript.exe` and `cscript.exe` for unusual use. A script tool starting a temporary file is a useful warning sign.
-
-### Detect ransomware by behaviour
-
-Look for sudden bursts of file changes, especially when many documents are changed within a short period. This is more useful than relying only on a known malware name or hash.
+Look for a sudden rise in document changes from one system or one process. A rule based on behaviour can still work when the malware uses a new name or hash.
 
 ### Limit SMB access
 
-Only allow systems that need SMB access to reach file servers. Network separation can help stop a compromised workstation from affecting shared storage.
+Only allow systems that need SMB to reach the relevant file servers. This can reduce the amount of damage a compromised workstation can cause.
 
-## What this investigation shows
+## Detection lessons
 
-The strongest detections come from combining simple signals. Login volume, password variety, unusual uploads, process relationships, SMB connections, and rapid file changes each provide a useful clue. When they occur together, they give a much clearer picture of the attack.
+The most useful signals from this investigation were simple behaviours:
 
-The SPL files in `../detections/` turn these findings into practical searches that can be tested and adapted for other environments.
+- many login attempts in a short time
+- unusual upload file types
+- suspicious process chains
+- repeated outbound connections
+- SMB access
+- large numbers of file changes in a short period
+
+These behaviours are covered by the SPL files in `../detections/`.
