@@ -1,29 +1,37 @@
-# MITRE ATT&CK and D3FEND Mapping
+# MITRE ATT&CK & D3FEND Mapping
 
-The mappings below reproduce the technique-to-defensive-strategy relationships presented in the Case #51489 report.
+This mapping connects the observed attack behaviours to MITRE ATT&CK techniques and practical D3FEND defensive strategies. The objective is to show not only how an adversary progressed through the environment, but where a SOC could interrupt that progression.
 
-## Website defacement incident
+## Web-server compromise
 
-| ATT&CK | Technique | Observed behaviour | D3FEND strategy | Rationale |
+| ATT&CK | Technique | Observed behaviour | D3FEND strategy | Defensive value |
 |---|---|---|---|---|
-| T1110 | Brute Force | Automated authentication attempts against admin login | Account Locking / Strong Password Policy | Limits login attempts and increases time to brute force. |
-| T1078 | Valid Accounts | Successful login using compromised admin credentials | MFA | Adds another security layer after credential compromise. |
-| T1190 | Exploit Public-Facing Application | Attacker targeted exposed admin portal | Proxy-based Web Server Access Mediation / Web Session Activity Analysis | Restricts access and blocks suspicious upload attempts. |
-| T1105 | Ingress Tool Transfer | Upload of `3791.exe` and `agent.php` | File Integrity Monitoring | Detects unauthorised uploads or modifications in server directories. |
-| T1505 | Server Software Component | Uploaded scripts used to control the server | Process Lineage Analysis | Identifies unusual processes/scripts and abnormal parent-child chains. |
+| T1110 | Brute Force | Automated password guessing against the Joomla administrator login | Account Locking / Strong Password Policy | Reduces the rate at which credentials can be guessed and raises the cost of automation. |
+| T1078 | Valid Accounts | Successful use of the compromised `admin` credential | Multi-factor Authentication | Prevents a stolen or guessed password from being sufficient on its own. |
+| T1190 | Exploit Public-Facing Application | Attack focused on an exposed Joomla administration interface | Web Session Activity Analysis / Web Server Access Mediation | Restricts and monitors access to sensitive application paths. |
+| T1105 | Ingress Tool Transfer | `3791.exe` and `agent.php` uploaded to the web server | File Integrity Monitoring | Detects unexpected additions or changes to application content. |
+| T1505 | Server Software Component | Server-side script content introduced after authentication | Process Lineage Analysis | Helps surface abnormal application-to-process relationships and suspicious script activity. |
 
-## Ransomware incident
+## Ransomware infection
 
-| ATT&CK | Technique | Observed behaviour | D3FEND strategy | Rationale |
+| ATT&CK | Technique | Observed behaviour | D3FEND strategy | Defensive value |
 |---|---|---|---|---|
-| T1204 | User Execution | User opened malicious document from USB | Executable Allowlisting | Prevents unauthorised payloads from executing. |
-| T1059 | Command and Scripting Interpreter | VBScript executed via `wscript.exe` | Script Execution Control | Restricts and monitors scripting interpreters used by malware. |
-| T1059.005 | Visual Basic | VBScript used to launch malicious payload | Script Execution Analysis | Detects suspicious script activity and blocks unauthorised processes. |
-| T1036 | Masquerading | Payload disguised as temporary file `121214.tmp` | File Content Analysis | Helps identify files with suspicious content. |
-| T1021.002 | SMB / Windows Admin Shares | Host accessed file server to encrypt files on network share | Remote File Access Mediation | Restricts remote file access. |
-| T1486 | Data Encrypted for Impact | Hundreds of files rapidly encrypted locally and on file server | File Access Pattern Analysis / Process Termination | Detects bulk modification and can stop the process before further spread. |
-| T1071 | Application Layer Protocol | Multiple outbound connections indicating potential C2 | Connection Attempt Analysis / Outbound Traffic Filtering | Monitors and restricts abnormal repeated connections to external systems. |
+| T1204 | User Execution | Malicious Office document opened from removable media | Executable Allowlisting | Prevents unauthorised payloads from reaching execution. |
+| T1059 | Command and Scripting Interpreter | `wscript.exe` used to launch the scripted stage | Script Execution Control | Restricts and monitors script interpreters commonly abused by malware. |
+| T1059.005 | Visual Basic | `20429.vbs` used to continue the execution chain | Script Execution Analysis | Provides visibility into suspicious VBScript behaviour and process relationships. |
+| T1036 | Masquerading | Payload presented as `121214.tmp` | File Content Analysis | Examines suspicious files whose names or locations do not match expected content. |
+| T1021.002 | SMB / Windows Admin Shares | Workstation accessed the file server over TCP/445 | Remote File Access Mediation | Limits unnecessary remote access and helps contain lateral impact. |
+| T1486 | Data Encrypted for Impact | Hundreds of files modified rapidly on local and remote storage | File Access Pattern Analysis / Process Termination | Detects high-rate destructive activity and supports rapid containment. |
+| T1071 | Application Layer Protocol | Repeated outbound connections provide potential command-and-control context | Connection Attempt Analysis / Outbound Traffic Filtering | Highlights repeated external communications and provides an opportunity to block them. |
 
-## Layered defensive controls
+## Defensive design
 
-The report's overall conclusion is that layered controls are appropriate: stronger authentication, script-execution restrictions, behavioural monitoring, file-integrity monitoring, and network segmentation can reduce the likelihood or impact of similar attacks.
+The mapping supports a layered response model:
+
+1. **Identity controls** — MFA, strong passwords and account lockout reduce the chance that exposed administration interfaces become the initial access point.
+2. **Application integrity** — monitoring changes to web content can reveal malicious uploads shortly after successful authentication.
+3. **Execution controls** — restricting scripting interpreters and unusual parent-child process chains can interrupt the ransomware payload before impact.
+4. **Behavioural detection** — rapid password guessing, repeated external connections and bulk file modification are useful signals because they remain valuable even when malware changes names or hashes.
+5. **Network containment** — controlling SMB access and segmenting critical servers limits the reach of a compromised workstation.
+
+The full set of detection queries is stored under `../detections/`, linking the ATT&CK behaviours above to concrete Splunk implementation.
