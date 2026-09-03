@@ -1,36 +1,40 @@
 # Attack Chain
 
-The investigation found two main attack paths. Both start with a simple entry point and then move through several steps before causing damage.
+The investigation found two different attack paths. Each one started with a fairly normal looking event, then moved through a series of steps that became increasingly suspicious.
 
 ## 1. Joomla web server compromise
 
 ```text
 23.22.63.114
-     |
-     +--> Repeated login requests to Joomla admin page
-     |
-     +--> 412 password attempts in about 90 seconds
-     |
-     +--> Successful login
-             |
-             +--> 40.80.148.42 reaches Joomla dashboard
-             |
-             +--> 3791.exe uploaded
-             |
-             +--> agent.php uploaded
-                     |
-                     +--> Web server compromised
+    |
+    +--> Joomla administrator login
+    |
+    +--> 412 password attempts in about 90 seconds
+    |
+    +--> Successful password found
+    |
+    +--> 40.80.148.42 logs in successfully
+    |
+    +--> 3791.exe uploaded
+    |
+    +--> agent.php uploaded
+    |
+    +--> Web server compromised
 ```
 
-### Why this chain is important
+### What happened
 
-The login activity was unusually fast and involved many different passwords. A successful login followed shortly after. The same period also contains uploads of an executable and a PHP file.
+The Joomla administrator page received a large number of login attempts in a very short time. This was not normal administrator activity. One of the attempts used the correct password and access to the Joomla dashboard was given.
 
-The events are much more convincing when looked at together. The investigation does not need to rely on a single suspicious event. The login pattern, successful access, and file uploads all point in the same direction.
+After the successful login, `3791.exe` and `agent.php` were uploaded to the server. This is important because it shows that the attacker did more than gain access. They also placed new files on the server.
 
 ### ATT&CK techniques
 
-`T1110` Brute Force → `T1078` Valid Accounts → `T1190` Exploit Public-Facing Application → `T1105` Ingress Tool Transfer → `T1505` Server Software Component
+- **T1110 - Brute Force:** many password attempts were made against the login page.
+- **T1078 - Valid Accounts:** the correct administrator password was used to gain access.
+- **T1190 - Exploit Public-Facing Application:** the exposed Joomla administrator page was the entry point.
+- **T1105 - Ingress Tool Transfer:** files were uploaded after access was gained.
+- **T1505 - Server Software Component:** server-side content was introduced to support the compromise.
 
 ## 2. Ransomware infection
 
@@ -38,47 +42,50 @@ The events are much more convincing when looked at together. The investigation d
 Removable media
       |
       +--> Miranda Tate unveiled.dotm
-                   |
-                   +--> Document opened
-                          |
-                          +--> wscript.exe
-                                 |
-                                 +--> 20429.vbs
-                                        |
-                                        +--> 121214.tmp
-                                               |
-                         +---------------------+---------------------+
-                         |                                           |
-                         v                                           v
-                Files changed locally                         SMB / TCP 445
-                         |                                           |
-                         +--> 406 unique .txt files        we9041srv file server
-                                                                     |
-                                                                     +--> 257 unique .pdf files
+                 |
+                 +--> Document executed
+                        |
+                        +--> wscript.exe
+                               |
+                               +--> 20429.vbs
+                                      |
+                                      +--> 121214.tmp
+                                             |
+                              +--------------+--------------+
+                              |                             |
+                              v                             v
+                     Workstation files              SMB / TCP 445
+                              |                             |
+                              +--> 406 .txt files    we9041srv
+                                                           |
+                                                           +--> 257 .pdf files
 ```
 
-### Why this chain is important
+### What happened
 
-The process logs show the document leading to `wscript.exe`, then `20429.vbs`, and then `121214.tmp`. Network logs show the same workstation connecting to `we9041srv` over TCP/445. File activity then shows a large number of document files being changed.
+The workstation `we8105desk` ran `Miranda Tate unveiled.dotm`. The document then started `wscript.exe`, which ran `20429.vbs`. That script launched `121214.tmp`.
 
-The speed and number of file changes make this very different from normal user activity and provide a strong basis for detecting ransomware behaviour.
+The next clear sign of the attack was a large burst of file encryption. The workstation had 406 unique `.txt` files affected. The workstation also reached `we9041srv` over TCP/445, and 257 unique `.pdf` files on that server were affected.
+
+The process chain, the network connection, and the large number of file changes all support the same conclusion. This was not simply a user opening a document. It was a chain that led to ransomware impact.
 
 ### ATT&CK techniques
 
-`T1204` User Execution → `T1059` Command and Scripting Interpreter → `T1059.005` Visual Basic → `T1036` Masquerading → `T1021.002` SMB / Windows Admin Shares → `T1486` Data Encrypted for Impact
+- **T1204 - User Execution:** a user opened the malicious document.
+- **T1059 - Command and Scripting Interpreter:** `wscript.exe` was used to run the script.
+- **T1059.005 - Visual Basic:** `20429.vbs` was part of the execution chain.
+- **T1036 - Masquerading:** `121214.tmp` used a generic temporary-looking name.
+- **T1021.002 - SMB / Windows Admin Shares:** the workstation reached the file server over TCP/445.
+- **T1486 - Data Encrypted for Impact:** large numbers of files were encrypted.
 
-Repeated outbound communication was also reviewed as possible `T1071` Application Layer Protocol activity.
+## Where detection could have helped
 
-## Detection opportunities
-
-Each stage of the attack leaves a useful signal in the logs.
-
-| Attack stage | What can be seen | Detection |
+| Attack step | What could have been spotted | Detection |
 |---|---|---|
-| Password attack | Many login attempts with different passwords in a short time | `../detections/brute_force.spl` |
-| File upload | Executable or script files sent through HTTP | `../detections/malicious_file_upload.spl` |
-| External communication | Repeated connections to the same external address | `../detections/c2_beaconing.spl` |
+| Password guessing | Many login attempts in a short time | `../detections/brute_force.spl` |
+| File upload | Executable or script files sent to the web server | `../detections/malicious_file_upload.spl` |
+| Outbound communication | Repeated connections to an external address | `../detections/c2_beaconing.spl` |
+| Scripted temp file | Script tools starting `.tmp` files | `../detections/suspicious_temp_execution.spl` |
 | File encryption | Large numbers of document files changed quickly | `../detections/ransomware_activity.spl` |
-| Temporary payload execution | `wscript.exe`, `cscript.exe`, or `cmd.exe` starting `.tmp` files | `../detections/suspicious_temp_execution.spl` |
 
-This is the main lesson from the investigation. Useful detections can be built from normal log fields and behaviour, even when the exact malware name or file hash is not known.
+The main lesson is that the attack did not depend on one unique file name or one alert. Several simple signals appeared at different stages. Joining those signals makes the overall attack much easier to see.
