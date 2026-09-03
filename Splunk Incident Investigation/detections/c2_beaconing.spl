@@ -1,4 +1,9 @@
-/* Case #51489 — Detecting C2 Behaviour
- * Source: incident analysis report, Detection Rules §3.3.
- * The report's complete Splunk query is preserved in the supplied project package.
- */
+index=botsv1 sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=3
+| eval external_dest=if(cidrmatch("10.0.0.0/8",dest_ip) OR cidrmatch("172.16.0.0/12",dest_ip) OR cidrmatch("192.168.0.0/16",dest_ip),0,1)
+| where external_dest=1 AND src_ip!=dest_ip
+| bin _time span=1m
+| stats count as connections_per_minute values(dest_port) as ports by _time host src_ip dest_ip
+| stats count as active_minutes avg(connections_per_minute) as avg_connections_per_minute values(ports) as ports by host src_ip dest_ip
+| where active_minutes >= 3 AND avg_connections_per_minute >= 2
+| table host src_ip dest_ip active_minutes avg_connections_per_minute ports
+| sort -active_minutes -avg_connections_per_minute
