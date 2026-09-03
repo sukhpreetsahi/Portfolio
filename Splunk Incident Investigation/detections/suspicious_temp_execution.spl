@@ -1,4 +1,8 @@
-/* Case #51489 — Detecting Temp File Execution Pipeline
- * Source: incident analysis report, Detection Rules §3.5.
- * The report's complete Splunk query is preserved in the supplied project package.
- */
+index=botsv1 sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+| eval img=lower(Image), pimg=lower(ParentImage), cmd=lower(CommandLine)
+| rex field=cmd "(?<tmp_file>[a-z0-9._-]+\.tmp)"
+| where isnotnull(tmp_file)
+| where like(pimg,"%\\wscript.exe") OR like(pimg,"%\\cscript.exe") OR (like(img,"%\\cmd.exe") AND like(cmd,"%start%"))
+| search NOT User="NT AUTHORITY\\SYSTEM"
+| table _time host User Image ParentImage CommandLine ProcessId ParentProcessId tmp_file
+| sort - _time
