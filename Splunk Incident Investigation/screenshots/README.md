@@ -1,11 +1,13 @@
 # Evidence Screenshots
 
-The report contains the underlying Splunk evidence figures for the overview, brute-force, upload, ransomware and timeline views. The extracted evidence images are included in the accompanying project package supplied with this change.
+These images provide visual evidence for the main investigation stages and make the Splunk workflow easier to review alongside the queries and written analysis.
 
-## Evidence mapping
+| Image | What it demonstrates |
+|---|---|
+| `splunk_overview.png` | Initial scoping of the environment and identification of the primary web-server destination. |
+| `brute_force_detection.png` | The brute-force detection surfacing the high-volume authentication activity. |
+| `malicious_upload.png` | Detection of suspicious executable / script upload activity to the web server. |
+| `ransomware_detection.png` | Detection of rapid, high-volume file modification consistent with ransomware. |
+| `attack_timeline.png` | The reconstructed sequence of major events across the two attack paths. |
 
-- `splunk_overview.png` — report Appendix C, Figure 11 / destination-IP overview.
-- `brute_force_detection.png` — report Appendix C, Figure 17 / brute-force detection result.
-- `malicious_upload.png` — report Appendix C, Figure 16 / malicious upload detection result.
-- `ransomware_detection.png` — report Appendix C, Figure 19 / encrypted-file detection result.
-- `attack_timeline.png` — report Figures 8–9 / cyber kill-chain timelines.
+The screenshots are intended to be read together with the SPL in `../detections/` and the investigation notes in `../investigation/`.
