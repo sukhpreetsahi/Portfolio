@@ -90,7 +90,3 @@ A client-server investment management system designed around confidentiality, in
 - 💼 **LinkedIn:** [linkedin.com/in/sukhpreet-s-4b5148289](https://www.linkedin.com/in/sukhpreet-s-4b5148289)
 - 📧 **Email:** [sukhpreetsahi5@gmail.com](mailto:sukhpreetsahi5@gmail.com)
 - 🐙 **GitHub:** [github.com/sukhpreetsahi](https://github.com/sukhpreetsahi)
-
----
-
-> Building security into systems from the start — not as an afterthought.
