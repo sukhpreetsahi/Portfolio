@@ -1,8 +1,8 @@
 # Implementation
 
-This directory is reserved for the sanitised implementation extracted from the original research code.
+This directory is for the sanitised implementation extracted from the original research code.
 
-## What belongs here
+## What is here
 
 - Document preprocessing and text extraction
 - Text chunking
@@ -13,9 +13,9 @@ This directory is reserved for the sanitised implementation extracted from the o
 - Compliance classification
 - CLI entry point
 
-## Before publishing source code
+## Public Source code limitations
 
-Remove hard-coded references to the original research organisations, private file paths and dataset locations. Keep the policy documents, generated chunks, ground-truth annotations and organisation-specific results outside the repository.
+Removed hard-coded references to the original research organisations, private file paths and dataset locations. Kept the policy documents, generated chunks, ground-truth annotations and organisation-specific results outside the repository.
 
 A future CLI can expose the pipeline through an interface such as:
 
@@ -23,5 +23,3 @@ A future CLI can expose the pipeline through an interface such as:
 python main.py --policy <policy-file> --method hybrid
 python main.py --policy <policy-file> --method rag
 ```
-
-These commands document the intended interface; they should only be described as tested usage after the public implementation has been verified.
