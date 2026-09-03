@@ -1,0 +1,6 @@
+numpy
+scikit-learn
+rank-bm25
+sentence-transformers
+PyMuPDF
+ollama
